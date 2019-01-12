@@ -30,7 +30,7 @@ While neural networks operating on raw transactional level data are used for the
 
 To our knowledge this is the first time raw transaction-level bank data is used for the task of credit scoring. 
 
-\section{Our approach}
+\section{The method}
 \subsection{Data preparation}
 
 
@@ -174,20 +174,14 @@ transaction histories for two clients from the same class
 
 
 
-Graph: Ox-epoch, Oy-Train/Validation Gini , Series: (baseline, trx do, emb do, emb shuffle,) 
+Graph: Ox-epoch, Oy-Train/Validation Gini , Series: (baseline, trx do, emb do, emb shuffle,)
 
-
-\subsection{Variable importance}
-
-
-Graph of variable importance
-
-
-\section{Comparison with classical methods...}
+\section{Experiments}
+\subsection{Comparison with classical methods...}
 
 Logreg(note st the tsble that the data is not directly comparable)
 
-\subsection{GBM based approach}
+\subsubsection{GBM based approach}
 
 To compare our model with other approaches to classification we have also implemented completely different model. We used gradient boosting machine (Friedman\cite{friedman2001greedy}) as the classifier which gets large vector of hand-crafted aggregate features as an input. An example of aggregate feature would be the mean spends in some category of merchants (e. g. hotels).
 We used LightGBM\cite{Ke2017LightGBMAH} implementation of GBM algorithm and created nearly 7000 aggregate features per sample.
@@ -216,9 +210,13 @@ The comparison of validation results can be seen in \ref{tab2}. Training and val
 
 On \ref{fig1} there is the learning curve for RNN and LGBM models. As you can see for the small number of training samples LGBM with hand-crafted features is better than RNN but if we have enough data RNN can perform significantly better. Also, RNN has steeper learning curve than LightGBM hence the performance gap would increase with more data.
 
-\section{Model fine-tuning for mortgage loans model}
+\subsection{Variable importance}
 
-\section{Results and discussion}
+Graph of variable importance
+
+\subsection{Model fine-tuning for mortgage loans model}
+
+\section{Results}
 
 \subsection{Application in production credit pipeline}
 
