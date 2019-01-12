@@ -57,11 +57,7 @@ Each client has multiple time-stamped transactions and each transaction has seve
 \end{table}
 
 Each categorical variable in each transaction is encoded to a low-dimensional vector via embedding layers. We have treated the timestamp as a collection of categorical variables each representing a date part (hour, weekday, month). Each transaction is represented with a concatenation of scalar variables and embeddings of categorical variables. Each client is represented by a sequence of transactions.
-The avaivable transaction data falls into 
-
-\scategories - transaction-level (timestamp, country, amount, MCC) and card-level (issuing branch, card type), card-level data is duplicated verbatim for each transaction corresponding to the said carubsection{Experiment data}
-Our tratwo ining dad.. taset represented XX M  users with XX M total transactions. As a target variable we used the event of default for consumer loan during a year after its disbursement. 
-We have used data for period XX - XX for training  (XX applications, XX defaults) and period XX -XX for out-of-time validation (XX applications, XX defaults ) Due to a large disparity between number of positive and negative cases we settled on the following sampling strategy: before each experiment select all positive cases and 10 times as much randomly selected negative cases, on each training epoch we use all positive cases and a same number of negative cases, selected from the negative cases pool.  
+The available transaction data falls into subcategories - transaction-level (timestamp, country, amount, MCC) and card-level (issuing branch, card type), card-level data is duplicated verbatim for each transaction corresponding to the said \carubsection{Experiment data}
 
 \subsection{Architecture overview}
 The general idea was to produce low-dimensional representation of the time-series and then pass it to a classifier. Then it would be possible to perform end-to-end training of the whole network including embeddings, encoder and classifier.
@@ -178,6 +174,9 @@ Graph: Ox-epoch, Oy-Train/Validation Gini , Series: (baseline, trx do, emb do, e
 
 \section{Experiments}
 \subsection{Comparison with classical methods...}
+\subsubsection{Data}
+Our training dadtaset represented XX M  users with XX M total transactions. As a target variable we used the event of default for consumer loan during a year after its disbursement. 
+We have used data for period XX - XX for training  (XX applications, XX defaults) and period XX -XX for out-of-time validation (XX applications, XX defaults ) Due to a large disparity between number of positive and negative cases we settled on the following sampling strategy: before each experiment select all positive cases and 10 times as much randomly selected negative cases, on each training epoch we use all positive cases and a same number of negative cases, selected from the negative cases pool.
 
 Logreg(note st the tsble that the data is not directly comparable)
 
