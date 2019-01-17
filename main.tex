@@ -76,7 +76,7 @@ The final architecture consists of embedding layers, encoder and classifier trai
 Categorical variables are embedded into a latent space before being passed to the encoder. The embedding layers are randomly ititialized and trained simultaneously with the encoder.
 The dimensionality of such embedding layer is an important hyperparameter as the number of trainable weights in embedding layer is significantly bigger than the number of weights in the encoder and decoder.  
 
-Graph: Ox-epoch, Oy-Train/Validation Gini , Series: (small, medium, big)
+Graph: Ox-epoch, Oy-Train/Validation ROC-AUC , Series: (small, medium, big)
 
 \subsubsection{Encoder}
 
@@ -97,7 +97,7 @@ We tried several classifiers based on multi-layer perceptrons with different act
 \caption{Encoder architecture comparison}
 \begin{tabular}{ | l | c |  }
 \hline
-& \textbf{validation Gini} \\
+& \textbf{validation ROC-AUC} \\
 \hline
 \textbf{GRU 1-layer} & 0,62  \\
 \textbf{GRU 2-layer} & 0,67  \\
@@ -115,8 +115,8 @@ We tried several classifiers based on multi-layer perceptrons with different act
 
 Our quality metric was Gini which is the scaled variant of ROC AUC ($G = 2A_{ROC} - 1$). Gini is the most popular metric for the credit scoring task.
 
-Several loss functions can be used as a proxy for the task of maximising Gini. The classic binary cross-entry loss: $L_{CE}(p, y) = - \sum_i y_ilog(p_i)$ is the default choice.
-The other possible approach is to use ranking loss: $ L_R(p_1, p_2, y) = \max(0, -y * (p_1 - p_2) + margin $ which directly optimizes Gini.
+Several loss functions can be used as a proxy for the task of maximising ROC AUC. The classic binary cross-entry loss: $L_{CE}(p, y) = - \sum_i y_ilog(p_i)$ is the default choice.
+The other possible approach is to use ranking loss: $ L_R(p_1, p_2, y) = \max(0, -y * (p_1 - p_2) + margin $ which directly optimizes ROC AUC.
 
 There is also an option to use modified version of binary cross-entropy loss proposed by Lin et al.\cite{DBLP:journals/corr/abs-1708-02002} and known as focal loss: $L_F(p, y) = -\sum_i (1 - p_i)^\gamma y_i log(p_i)$. Focal loss reduces penalty for easily classified samples i. e. samples for which the model prediction is very close to one. This is especially actual for poorly balanced datasets which is exactly our case. But preliminary tests of focal loss showed no improvement against BCE loss.
 
@@ -141,11 +141,11 @@ For production version we used margin ranking loss with margin 0.01 which showed
 \subsection{Learning rate}
 
 Learning rate is one of the most sensitive hyper-parameters which can dramatically change the performance of the model. We tried several learning rates and several learning rate reduction regimes. We found that the most effective strategy was using an aggressive learning rate reduction with gamma=0.5.
-For all experimens we used a batch size of 32 for training and batch size of 768 for validation.
+For all experiments we used a batch size of 32 for training and batch size of 768 for validation.
 
 While there are several techniques to tune learning rate the interesting option is to use cyclical learning rates like proposed by Leslie N. Smith.\cite{DBLP:journals/corr/Smith15a}
 
-Graph: Ox-epoch, Oy-Train/Validation Gini , Series: (lr=0.0001 const, lr decreasing g=0.8, g=0.5, cyclical g =0.5) 
+Graph: Ox-epoch, Oy-Train/Validation ROC AUC , Series: (lr=0.0001 const, lr decreasing g=0.8, g=0.5, cyclical g =0.5) 
 
 
 \subsection{Ensembling}
@@ -156,7 +156,7 @@ Another interesting approach is to use snapshots of the same model in the final 
 
 Yet another interesting possibility is to use stochastic weight averaging proposed by Izmailov et al.\cite{DBLP:journals/corr/LoshchilovH16a} This approach can significantly reduce inference time since only one model with averaged weights is used instead of the whole ensemble. But in our case ensemble of models trained on slightly different subsets of data was best in terms of quality.
 
-Box-plot: Series = {Single, Ens-3, Ens-6  diff loss? } Cols = {val Gini + STD}
+Box-plot: Series = {Single, Ens-3, Ens-6  diff loss? } Cols = {val ROC AUC + STD}
 best hyperparams
 
 
