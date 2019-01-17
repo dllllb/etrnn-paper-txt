@@ -531,7 +531,7 @@
 
 \if@ll
   \NeedsTeXFormat{LaTeX2e}
-  \ProvidesClass{acmproc-sp} [1999/11/01 - V1.0SP - based on esub2acm.sty <23 April 96>]
+  \ProvidesClass{sigkddExp} [1999/11/01 - V1.0SP - based on esub2acm.sty <23 April 96>]
   \RequirePackage{latexsym}% QUERY: are these two really needed?
   \let\dooptions\ProcessOptions
 \else

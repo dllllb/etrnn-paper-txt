@@ -26,13 +26,23 @@ Unfortunately such models do not easily apply to some types of valuable data. Hi
 
 \section{Related work}
 
-While neural networks operating on raw transactional level data are used for the task of detection of fraudulent transactions for more than a decade \cite{fraud_lstm} we have not been able to find any usage of such data for the credit scoring task. Such data is incorporated either through some intermediate aggregation, use only the connectivity graph\cite{RePEc} or are recently used in a similar task of prediciting credit rations on p2p lending platforms.
+Credit risk assessment has historically been done using a wide array of features (credit history, questionary data, ) and models, 
+
+\begin{figure}
+  \caption{Typical features in Credit Risk Assessment studies, reprinted from \protect\cite{RePEc}}
+  \includegraphics[width=0.46\textwidth]{risk_features.jpg}
+  \label{fig-score-features}
+\end{figure}
+
+While neural networks operating on raw transactional level data are used for the task of detection of fraudulent transactions for more than a decade \cite{fraud_lstm} we have not been able to find any usage of such data for the credit scoring task. Such data is incorporated either through some intermediate aggregation, use only the connectivity graph\cite{RePEc} or are recently used in a similar task of predicting credit rations on p2p lending platforms.
 
 To our knowledge this is the first time raw transaction-level bank data is used for the task of credit scoring. 
 
 \section{The method}
-\subsection{Data preparation}
 
+
+
+\subsection{Transactional data}
 
 Each client has multiple time-stamped transactions and each transaction has several attributes, both categorical and numeric. See an example in table \ref{tab1}. Hence, our data looks like multivariate time-series, which is not the best representation for classical ML algorithms like logistic regression.
 
@@ -56,22 +66,32 @@ Each client has multiple time-stamped transactions and each transaction has seve
 \label{tab1}
 \end{table}
 
-Each categorical variable in each transaction is encoded to a low-dimensional vector via embedding layers. We have treated the timestamp as a collection of categorical variables each representing a date part (hour, weekday, month). Each transaction is represented with a concatenation of scalar variables and embeddings of categorical variables. Each client is represented by a sequence of transactions.
-The available transaction data falls into subcategories - transaction-level (timestamp, country, amount, MCC) and card-level (issuing branch, card type), card-level data is duplicated verbatim for each transaction corresponding to the said \carubsection{Experiment data}
 
 \subsection{Architecture overview}
-The general idea was to produce low-dimensional representation of the time-series and then pass it to a classifier. Then it would be possible to perform end-to-end training of the whole network including embeddings, encoder and classifier.
+The general idea was to produce low-dimensional representation of the time-series and then pass it to a classifier. We tried a number of architectures based on NLP including bag-of-transactions, transformer, and seq-to-seq. 
+The final architecture consists of embedding layers, encoder and classifier trained in end-to-end manner.
 
 \subsubsection{Embeddings}
 
 Categorical variables are embedded into a latent space before being passed to the encoder. The embedding layers are randomly ititialized and trained simultaneously with the encoder.
-The dimensionality of such embedding layer is an important hyperparameter as the number of trainable weights in embedding layer is significantly bigger than the number of weights in the encoder.  
+The dimensionality of such embedding layer is an important hyperparameter as the number of trainable weights in embedding layer is significantly bigger than the number of weights in the encoder and decoder.  
 
 Graph: Ox-epoch, Oy-Train/Validation Gini , Series: (small, medium, big)
 
 \subsubsection{Encoder}
 
-We tried two approaches. The first was a bag-of-transactions model where each separate attribute of the transaction vector was averaged across all transactions of a person to form the client representation. The second approach was to pass transaction vectors to RNN one by one and use RNN as an encoder. The hidden vector from the last last time step was used as the representation. This approach as typically used for text analysis “Sequence to Sequence Learning with Neural Networks”\cite{NIPS2014_5346}.
+We used a single layer Recurrent Neural Network (RNN) based on Gated Recurrent Unit (GRU)\cite{DBLP:journals/corr/ChoMGBSB14} as an encoder.  The hidden vector from the last last time step was used as the representation. This approach as typically used for text analysis “Sequence to Sequence Learning with Neural Networks”\cite{NIPS2014_5346}.
+
+\subsubsection{Classifier}
+
+We tried several classifiers based on multi-layer perceptrons with different activation functions, but were not able to archive better results than with a simple linear classifier.
+
+
+\begin{figure}
+  \caption{Final architecture}
+  \includegraphics[width=0.46\textwidth]{architecture.png}
+  \label{fig-arch}
+\end{figure}
 
 \begin{table}
 \caption{Encoder architecture comparison}
@@ -89,19 +109,7 @@ We tried two approaches. The first was a bag-of-transactions model where each se
 \label{tab3}
 \end{table}
 
-\subsubsection{Classifier}
 
-We tried several classifiers based on multi-layer perceptrons with different activation functions, but were not able to archive better results than with a simple linear classifier.
-
-\subsection{Transaction count}
-
-\begin{figure}
-  \caption{Around 100 transactions is enough for confident classification}
-  \includegraphics[width=0.46\textwidth]{information-vs-accuracy.png}
-  \label{fig2}
-\end{figure}
-
-Also we can see on figure\ref{fig2} that one hundred transactions is enough to confidently estimate the default probability of a client. Half of the clients with plastic card have more than one hundred transactions. All models in this paper where trained on last 800 transactions, padding by zero when the actual transaction count for a client was lower.
 
 \subsection{Loss function}
 
@@ -173,31 +181,39 @@ transaction histories for two clients from the same class
 Graph: Ox-epoch, Oy-Train/Validation Gini , Series: (baseline, trx do, emb do, emb shuffle,)
 
 \section{Experiments}
-\subsection{Comparison with classical methods...}
-\subsubsection{Data}
-Our training dadtaset represented XX M  users with XX M total transactions. As a target variable we used the event of default for consumer loan during a year after its disbursement. 
-We have used data for period XX - XX for training  (XX applications, XX defaults) and period XX -XX for out-of-time validation (XX applications, XX defaults ) Due to a large disparity between number of positive and negative cases we settled on the following sampling strategy: before each experiment select all positive cases and 10 times as much randomly selected negative cases, on each training epoch we use all positive cases and a same number of negative cases, selected from the negative cases pool.
+\subsection{Data}
 
-Logreg(note st the tsble that the data is not directly comparable)
+The available transaction data falls into subcategories - transaction-level (timestamp, country, amount, MCC) and card-level (issuing branch, card type), card-level data is duplicated verbatim for each transaction corresponding to the said experiment data.
 
-\subsubsection{GBM based approach}
+Our training dataset represented 1.1 million? of clients with $\sim400$? M total transactions. As a target variable we used the event of default for consumer loan during a year after its disbursement.
+We have used data for period Aug 2015 - Nov 2017 for training  (1 million of applications, 60 thousands of defaults) and period Dec 2017 - Mar 2017 for out-of-time validation (100? thousands of applications, 15? thousands of defaults).
 
-To compare our model with other approaches to classification we have also implemented completely different model. We used gradient boosting machine (Friedman\cite{friedman2001greedy}) as the classifier which gets large vector of hand-crafted aggregate features as an input. An example of aggregate feature would be the mean spends in some category of merchants (e. g. hotels).
-We used LightGBM\cite{Ke2017LightGBMAH} implementation of GBM algorithm and created nearly 7000 aggregate features per sample.
+Each categorical variable in each transaction is encoded to a low-dimensional vector via embedding layers. We have treated the timestamp as a collection of categorical variables each representing a date part (hour, weekday, month). Each transaction is represented with a concatenation of scalar variables and embeddings of categorical variables.
+
+Due to a large disparity between number of positive and negative cases we settled on the following sampling strategy: before each experiment select all positive cases and 10 times as much randomly selected negative cases, on each training epoch we use all positive cases and a same number of negative cases, selected from the negative cases pool.
+
+
+
+\subsection{Baselines}
+
+To compare our model with other approaches to classification we have taken existing model which was used in bank for some time. For the thought comparison we also implemented additional model based on gradient boosting machine (Friedman\cite{friedman2001greedy} method.
+
+Both Logistic regression  and Gradient boosting machine methods (Friedman\cite{friedman2001greedy}) was used as the classifier which gets large vector of hand-crafted aggregate features as an input. An example of aggregate feature would be the mean spends in some category of merchants (e. g. hotels).
+We used LightGBM\cite{Ke2017LightGBMAH} implementation of GBM algorithm and created nearly 7000 aggregate features per sample. For current approach with lgistic regresion around 400 aggregate features was used. weight of evidence coding and binning of predictors was used for categorical features \cite{lund2016woe}. 
 
 \begin{table}
 \caption{Experiment comparison}
-\begin{tabular}{ | l | c | c | }
+\begin{tabular}{ | p{12em} | c | c | }
 \hline
-& \textbf{Gini} & \textbf{N Features} \\
+& \textbf{ROC AUC} & \textbf{N Features} \\
 \hline
-\textbf{LGBM on aggregate features} & 0,62 & $\sim7000$ \\
-\textbf{RNN on detailed data} & 0,67 & 16 \\
+\textbf{Logistic regression on aggregate features} & 0.78 & $\sim400$ \\
+\textbf{LGBM on aggregate features} & 0.81 & $\sim7000$ \\
+\textbf{RNN on detailed data} & 0.84 & 16 \\
 \hline
 \end{tabular}
 \label{tab2}
 \end{table}
-
 
 The comparison of validation results can be seen in \ref{tab2}. Training and validation sets were the same for each model.  As you can see RNN can significantly outperform classical ML approaches with hand-crafted features given enough data.
 
@@ -213,11 +229,23 @@ On \ref{fig1} there is the learning curve for RNN and LGBM models. As you can se
 
 Graph of variable importance
 
+\subsection{Transaction count}
+
+\begin{figure}
+  \caption{Around 100 transactions is enough for confident classification}
+  \includegraphics[width=0.46\textwidth]{information-vs-accuracy.png}
+  \label{fig2}
+\end{figure}
+
+Also we can see on figure\ref{fig2} that one hundred transactions is enough to confidently estimate the default probability of a client. Half of the clients with plastic card have more than one hundred transactions. All models in this paper where trained on last 800 transactions, padding by zero when the actual transaction count for a client was lower.
+
 \subsection{Model fine-tuning for mortgage loans model}
 
 \section{Results}
 
-\subsection{Application in production credit pipeline}
+\subsection{Real life application}
+
+We performed massive application of our neural scoring model in bank's production pipeline. The model was used to make decision about credit application for more than 80 thousand of applicants during one month (Dec 2018).
 
 \subsection{Interpretation}
 
