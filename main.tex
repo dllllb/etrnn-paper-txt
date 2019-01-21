@@ -4,7 +4,7 @@
 
 \begin{document}
 
-\title{Neural networks for card transactions analysis}
+\title{ETRNN: Transactions is all you need}
 
 \numberofauthors{1}
 \author{
@@ -20,13 +20,16 @@ The goal is to predict should we accept an application for a credit using the cl
 \end{abstract}
 
 \section{Introduction}
+
+The main goal of credit scoring process is to reduce informational asymmetry between credit applicant and financial institution.
+
 Traditionally, very simple models like logistic regression are used for the task of credit scoring. They are easily interpretable, computationally effective and have modest requirements to the dataset volume.
 
 Unfortunately such models do not easily apply to some types of valuable data. History of card transactions is a good example. Nearly half of the clients coming to take a credit already have some type of card account in the bank. And the transactions of that client contain information that can be used to predict customer credibility in addition to commonly used data such as credit history data and questionnaire data. One way to integrate such data into existing models would be by creating a number of aggregate variables (mean number of transactions per day, mean transaction amounts, mean balance etc.) In this paper we use a neural network to process transactional data without creating intermediate aggregates.
 
 \section{Related work}
 
-There is a large amount of research on credit scoring task going back to first half of XX century \cite{NBERc12952}. A wide array of methods is used for this task including logistic regression \cite{RePEc:cup:jfinqa:v:15:y:1980:i:03:p:757-770_00}, decision trees \cite{makowski1985credit}, boosting \cite{bastos2007credit}, support vector machines (SVM) \cite{HUANG2007847} and neural networks \cite{west2000neural}. Credit scoring has historically been done using questionnaire data and applicants' credit history, but lately new data sources have been used to increase scoring quality: telecom data \cite{bjorkegren2017behavior} and transactional data \cite{khandani2010consumer}, \cite{bellotti2013forecasting}, \cite{KVAMME2018207}, \cite{chi2012hybrid}.
+There is a large amount of research on credit scoring task going back to first half of XX century \cite{NBERc12952}. A wide array of methods is used for this task including logistic regression \cite{RePEc:cup:jfinqa:v:15:y:1980:i:03:p:757-770_00}, decision trees \cite{makowski1985credit}, boosting \cite{bastos2007credit}, support vector machines (SVM) \cite{HUANG2007847} and neural networks \cite{west2000neural}. Credit scoring has historically been done using questionnaire data and applicants' credit history, but lately new data sources have been used to increase scoring quality: telecom data \cite{bjorkegren2017behavior} and transactional data \cite{khandani2010consumer}, \cite{bellotti2013forecasting}, \cite{KVAMME2018207}, \cite{chi2012hybrid}, \cite{RePEc}.
 
 To properly incorporate transactional data into the scoring models the usual approach is either to create global features \cite{chi2012hybrid} or aggregate such data over some time window: month \cite{khandani2010consumer}, \cite{bellotti2013forecasting} or day \cite{KVAMME2018207}. Another approach is to use only the connectivity matrix generated from transactional data discarding all the transaction attributes except sender and recipient\cite{RePEc}.
 
@@ -38,7 +41,7 @@ While recurrent neural networks operating on raw transactional level data are us
 
 Each client has multiple time-stamped transactions and each transaction has several attributes, both categorical and numeric. See an example in table \ref{tab1}. 
 
-\begin{table}
+\begin{table}[h]
 \caption{Data structure for a single client}
 \begin{tabular}{ | l |  l l l | }
 \hline
@@ -76,7 +79,7 @@ We used a single layer Recurrent Neural Network (RNN) based on Gated Recurrent U
 
 We used a simple linear classifier, our experiments with deeper classifiers based on multi-layer perceptrons did not lead to increase in classification accuracy.
 
-\begin{figure}
+\begin{figure}[h]
   \caption{Final architecture}
   \includegraphics[width=0.46\textwidth]{architecture.pdf}
   \label{fig-arch}
@@ -99,16 +102,16 @@ Ensembling is a way to increase both quality of the model and its stability at t
 
 For production we settled to use mean predictions of an ensemble of six separately trained models as a practical balance between prediction quality and execution time. For discussion of ensemble quality gain and other possible ensembling strategies please see section 4.3
 
-\section{Experiments}
-\subsection{Data}
+\section{Experiments} \label{sec-exp}
+\subsection{Data} \label{sec-data}
 
-The available transaction data falls into subcategories - transaction-level (timestamp, country, amount, MCC) and card-level (issuing branch, card type), card-level data is duplicated verbatim for each transaction related to the corresponding card.
+The available transaction data falls into subcategories - transaction-level (timestamp, country, amount, MCC) and card-level (issuing branch, card type), card-level data is duplicated verbatim for each transaction related to the corresponding card. If a client has several cards then transactions from every card are taken into account. Only transactions which are made before the application date are taken for training and validation.
 
 Our training dataset represented 1.1 million of clients with $\sim400$ M total transactions. As a target variable we used the event of default for consumer loan during a year after its disbursement.
 
 Due to the risk of data non-stationarity we have opted to use out-of-time validation strategy as in \cite{KVAMME2018207} instead of out-of-sample validation as used in \cite{khandani2010consumer} and \cite{bellotti2013forecasting}. Our results for out-of-fold validation were consistently higher than out-of-time validation for a range of architectures and hyperparameters.
 
-We have used data for period Aug 2015 - Nov 2017 for training  (1 million of applications, 60 thousands of defaults) and period Dec 2017 - Mar 2017 for out-of-time validation (100 thousands of applications, 15 thousands of defaults).
+We have used data for period Aug 2015 - Nov 2017 for training  (1 million of applications, 60 thousands of defaults) and period Dec 2017 - Mar 2017 for out-of-time validation (100 thousands of applications, 15 thousands of defaults). Training and validation sets were the same for each model.
 
 Due to a large disparity between number of positive and negative cases we settled on the following sampling strategy: before each experiment we selected all positive cases and 10 times as much randomly selected negative cases, on each training epoch we used all positive cases and an equal number of negative cases, selected from the negative cases pool.
 
@@ -118,7 +121,7 @@ All models in this paper where trained on last 800 transactions for each custome
 
 To compare our model with other approaches to classification we have taken existing model which was used in bank for some time. For the thought comparison we also implemented additional model based on gradient boosting machine (Friedman\cite{friedman2001greedy} method.
 
-Both Logistic regression  and Gradient boosting machine methods (Friedman\cite{friedman2001greedy}) was used as the classifier which gets large vector of hand-crafted aggregate features as an input. An example of aggregate feature would be the mean spends in some category of merchants (e. g. hotels).
+Both Logistic regression and Gradient boosting machine methods (Friedman\cite{friedman2001greedy}) was used as the classifier which gets large vector of hand-crafted aggregate features as an input. An example of aggregate feature would be the mean spends in some category of merchants (e. g. hotels). !!! N features selected for LR
 
 We used LightGBM\cite{Ke2017LightGBMAH} implementation of GBM algorithm and created nearly 7000 aggregate features per sample. For current approach with lgistic regresion around 400 aggregate features was used. weight of evidence coding and binning of predictors was used for categorical features
 \cite{lund2016woe}. 
@@ -129,7 +132,7 @@ We used LightGBM\cite{Ke2017LightGBMAH} implementation of GBM algorithm and crea
 
 We experimented with different encoder architectures, but increasing number of layers, using Long Short Term Memory (LSTM) and using bidirectional recurrent cells did not improve on the quality of the model, the results are presented in Table 2
 
-\begin{table}
+\begin{table}[h]
 \caption{Encoder architecture comparison}
 \begin{tabular}{ | l | c |  }
 \hline
@@ -156,7 +159,7 @@ Graph: Ox-epoch, Oy-Train/Validation ROC-AUC , Series: (small, medium, big)
 
 For all experiments we used a batch size of 32 for training and batch size of 768 for validation. When using ranking loss a new hyperparameter is introduced into the model - loss margin size. We found that margin size 0.01 gives best results among all the loss variants we tried, see table 3. 
 
-\begin{table}
+\begin{table}[h]
 \caption{Loss comparison}
 \begin{tabular}{ | l | c |  }
 \hline
@@ -196,8 +199,11 @@ Graph: Ox-epoch, Oy-Train/Validation Gini , Series: (baseline, trx do, emb do, e
 
 Averaging the predictions of different models trained with distinct negative class examples leads to both increased accuracy and reduced variabilty of results, see Box-plot 1
 
-Box-plot: Series = {Single, Ens-3, Ens-6  diff loss? } Cols = {val ROC AUC + STD}
-best hyperparams
+\begin{figure}[h]
+  \caption{Ensemble quality comparison}
+  \includegraphics[width=0.46\textwidth]{ensemble-pic.png}
+  \label{fig-arch}
+\end{figure}
 
 Another ensembling method is Stochastic Weight averaging (SWA) proposed by Izmailov et al.\cite{DBLP:journals/corr/LoshchilovH16a} This approach can significantly reduce inference time since only one model with averaged weights is used instead of the whole ensemble. But in our case averaging of weights of different models led to significant reduction in quality.
 
@@ -208,12 +214,17 @@ We found that combining SWA with snapshot ensembling for single model training b
 
 \subsection{Moving to production}
 
-We performed massive field test of our neural scoring model in bank's production pipeline. We used the model trained on the datased discussed
-The model was used to make decision about credit application for tens of thousands of applicants during one month (Dec 2018).
+!!! Added value of the model. +3 ROC AUC. For best model.
+
+We performed massive field test of our neural scoring model in bank's production pipeline. We used the model trained on the same dataset discussed in section \ref{sec-data} to pre-calculate scores for each client with a debit or credit card.
+That scores was used to make decision about credit application for tens of thousands of applicants during one month (Dec 2018).
 The preliminary financial results are measured in tens of millions of dollars per year which is very significant result for the bank of this type and size.
 
 \section{Results}
-\begin{table}
+
+Table \ref{tab-res} presents the main results of the experiments described in section \ref{sec-exp}.
+
+\begin{table}[h]
 \caption{Experiment comparison}
 \begin{tabular}{ | p{12em} | c | c | }
 \hline
@@ -224,27 +235,35 @@ The preliminary financial results are measured in tens of millions of dollars pe
 \textbf{RNN on detailed data} & 0.84 & 16 \\
 \hline
 \end{tabular}
-\label{tab2}
+\label{tab-res}
 \end{table}
 
-The comparison of validation results can be seen in Table \ref{tab2}. Training and validation sets were the same for each model.  As you can see RNN can significantly outperform classical ML approaches with hand-crafted features given enough data.
+As Table \ref{tab-res} can see our method (RNN on detailed data) significantly outperform the baselines on our data. Moreover one of the crucial features of our approach is that for our method we did not have to do feature engineering, unlike the classical methods which heavily rely on the hand-crafted features.
 
-\begin{figure}
+
+Note, that resuts preseented in table 4 was achived on large volume of data. Alse we than And the 
+
+As figure 3 shows that LGBM __outperfroms__ our apprach for small wolumes of data. However^ given enough data RNN-based method significantly outperforms classical method, This is in line with the well-known understanding that neural networks outperfrom classical method on large datasets.
+
+\begin{figure}[h]
   \caption{RNN has steeper learning curve than LGBM.}
   \includegraphics[width=0.46\textwidth]{learning-curve.png}
   \label{fig-lc}
 \end{figure}
 
-On \ref{fig-lc} there is the learning curve for RNN and LGBM models. As you can see for the small number of training samples LGBM with hand-crafted features is better than RNN but if we have enough data RNN can perform significantly better. Also, RNN has steeper learning curve than LightGBM hence the performance gap would increase with more data.
+On Figure \ref{fig-lc} there is the learning curve for RNN and LGBM models. As you can see for the small number of training samples LGBM with hand-crafted features is better than RNN but if we have enough data RNN can perform significantly better. Also, RNN has steeper learning curve than LightGBM hence the performance gap would increase with more data.
 
 \subsection{Minimal number of training samples}
 
-The main limitation of our method is availability of enough training examples of default applications. As you can see on \ref{fig-lc} around 15 thousands facts of default is required for to make neural net model which i
- better than gradient boosting machine model.
+Note^ that our resutls outperformed ..
+
+However, as figure 4 our method performs best for the customers having many transactions. For example^ for the customers having 100 transactions. Note, that at least half of our clients have at least 100 transactions.
+
+The main limitation of our method is availability of enough training examples of default applications. As you can see on \ref{fig-lc} around 15 thousands facts of default is required for to make neural net model which is better than gradient boosting machine model.
 
 \subsection{Transaction count}
 
-\begin{figure}
+\begin{figure}[h]
   \caption{Around 100 transactions is enough for confident classification}
   \includegraphics[width=0.46\textwidth]{information-vs-accuracy.png}
   \label{fig-tc}
@@ -252,7 +271,9 @@ The main limitation of our method is availability of enough training examples of
 
 One of the limitations of our method is the minimum number of transaction per client. We can see on figure\ref{fig-tc} that nearly one hundred of transactions is desirable to confidently estimate the default probability of a client. Regarding our dataset, half of the bank clients with plastic card have more than one hundred transactions.
 
-\subsection{Discussion}
+\section{Discussion}
+
+TBD: Transactional data can kill other data sources. Preliminary results show that the model, based only on transactional data can outperform ... Quick approval of client application.
 
 While interpretation of the black-box model like LSTM or GRU is exceptionally hard, it is possible to change the architecture of the network to make it interpretable without sacrificing significant part of its classification quality.
 
