@@ -102,7 +102,7 @@ More generally, we experimented extensively with different types of deep learnin
 
 \begin{figure}[ht]
   \caption{Final architecture}
-  \includegraphics[width=0.46\textwidth]{architecture.pdf}
+  \includegraphics[width=0.46\textwidth]{figures/architecture.pdf}
   \label{fig-arch}
 \end{figure}
 
@@ -186,7 +186,7 @@ The dependence of the model performance on the latent space dimensionality is pr
 
 \begin{figure}[ht]
   \caption{Latent space dimensionality}
-  \includegraphics[width=0.46\textwidth]{latent-pic.png}
+  \includegraphics[width=0.46\textwidth]{figures/latent-pic.png}
   \label{fig-lat}
 \end{figure}
 
@@ -244,7 +244,7 @@ Note that, none of the aforementioned regularization methods proved effective ag
 
 \begin{figure}[ht]
   \caption{Regularization methods}
-  \includegraphics[width=0.46\textwidth]{do-pic.png}
+  \includegraphics[width=0.46\textwidth]{figures/do-pic.png}
   \label{fig-reg}
 \end{figure}
 
@@ -261,7 +261,7 @@ We tried several different types of ensembling methods:
 
 \begin{figure}[ht]
   \caption{Ensemble quality comparison}
-  \includegraphics[width=0.46\textwidth]{ensemble-pic.png}
+  \includegraphics[width=0.46\textwidth]{figures/ensemble-pic.png}
   \label{fig-ens}
 \end{figure}
 
@@ -304,17 +304,17 @@ Also note that E.T.-RNN has steeper learning curve than LGBM hence the performan
 
 \begin{figure}[ht]
   \caption{E.T.-RNN has steeper learning curve than LGBM.}
-  \includegraphics[width=0.46\textwidth]{learning-curve.png}
+  \includegraphics[width=0.46\textwidth]{figures/learning-curve.png}
   \label{fig-lc}
 \end{figure}
 
 \subsection{Transaction count}
 
-Note that performance of our model depends on the number of available transactions per client. As Figure \ref{fig-tc} shows our method performs the best for those customers who have many transactions. For example, for the customers having at least one hundred transactions, the performance of the model is close to its peak. As figure \ref{fig-tc} shows on the right Y axis, 75??? percents of the clients in our dataset have at least one hundred transactions.
+Note that performance of our model depends heavily on the number of available transactions per client. As Figure \ref{fig-tc} shows our method performs the best for those customers who have many transactions. For example, for the customers having at least one hundred transactions, the performance of the model is close to its peak. As figure \ref{fig-tc} shows on the right Y axis, 75??? percents of the clients in our dataset have at least one hundred transactions.
 
 \begin{figure}[ht]
   \caption{Around 100 of transactions is enough for confident classification}
-  \includegraphics[width=0.46\textwidth]{information-vs-accuracy.png}
+  \includegraphics[width=0.46\textwidth]{figures/information-vs-accuracy-max.png}
   \label{fig-tc}
 \end{figure}
 
