@@ -295,7 +295,7 @@ Table \ref{tab-res} presents the main results of the experiments described in Se
 
 As shown in Table \ref{tab-res} E.T.-RNN significantly outperformed the baselines on our data, moreover one of the crucial features of our approach is that for our method we did not have to do feature engineering, unlike the classical methods which rely heavily on the hand-crafted features (400 features for Logistic regression and 7000 features for LGBM).
 
-\subsection{Minimal number of training samples}
+\subsection{Training dataset size}
 
 Note that results presented in Table \ref{tab-res} were achieved on the full dataset described in Section \ref{sec-data}. We also conducted a series of experiments to estimate model performance for different dataset sizes.
 As Figure \ref{fig-lc} shows LGBM outperforms our approach for \textit{small} volumes of data, as measured in terms of the number of applications (on the X axis). However, given enough data, E.T.-RNN method significantly outperforms classical approach. This observation is in line with the well-known understanding that neural networks outperform classical methods on large datasets.
@@ -310,10 +310,10 @@ Also note that E.T.-RNN has steeper learning curve than LGBM hence the performan
 
 \subsection{Transaction count}
 
-Note that performance of our model depends heavily on the number of available transactions per client. As Figure \ref{fig-tc} shows our method performs the best for those customers who have many transactions. For example, for the customers having at least one hundred transactions, the performance of the model is close to its peak. As figure \ref{fig-tc} shows on the right Y axis, 75??? percents of the clients in our dataset have at least one hundred transactions.
+Note that performance of our model depends heavily on the number of available transactions per client. As Figure \ref{fig-tc} shows, scoring quality increasing till we reach around 300-400 transactions, after this number the increase in available information is small enough to be overshadowed by statistical variations in the data. For our dataset the share of clients reaching this soft transaction limit is XX. On the other hand our method is still effective even for applicants with a very low, but non-zero number of transactions. For clients with more than XX transactions (XX percent of total number of clients) we reach XX ROC-AUC which is XXXXXX. 
 
 \begin{figure}[ht]
-  \caption{Around 100 of transactions is enough for confident classification}
+  \caption{Classification quality vs number of transactions}
   \includegraphics[width=0.46\textwidth]{figures/information-vs-accuracy-max.png}
   \label{fig-tc}
 \end{figure}
