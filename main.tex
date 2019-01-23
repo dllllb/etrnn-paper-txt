@@ -2,14 +2,16 @@
 \usepackage{tabularx}
     \newcolumntype{L}{>{\raggedright\arraybackslash}X}
 
-\copyrightyear{2019}
 \acmYear{2019}
-\setcopyright{acmlicensed}
+\setcopyright{none}
 \acmConference[KDD '19]{KDD 2019}{Aug 04--08, 2019}{Anchorage, Alaska}
+\acmPrice{}
+\acmISBN{}
+\acmDOI{}
 
 \begin{document}
 
-\title{E.T.-RNN: Transactions is all you need}
+\title{E.T.-RNN: Neural networks for card transactions analysis}
 
 \author{Anonymous authors}
 \authornote{Paper under double-blind review}
@@ -88,7 +90,7 @@ In particular, each categorical variable in each transaction is encoded to a low
 
 \subsubsection{Encoder}
 
-We used a single layer Recurrent Neural Network (RNN) based on Gated Recurrent Unit (GRU)\cite{DBLP:journals/corr/ChoMGBSB14} as an encoder.  The hidden vector from the last last time step was used as the representation of the client. This approach is commonly used for text analysis \cite{NIPS2014_5346}.
+We used a single layer RNN based on Gated Recurrent Unit (GRU)\cite{DBLP:journals/corr/ChoMGBSB14} as an encoder.  The hidden vector from the last last time step was used as the representation of the client. This approach is commonly used for text analysis \cite{NIPS2014_5346}.
 
 \subsubsection{Classifier}
 
@@ -123,7 +125,15 @@ In the final version of our model we settled to use mean predictions of an ensem
 
 For our experiments we took transnational data for the clients applied for the retail credits. We only considered applicants who already used debit or a credit card product in the bank. If a client has several cards, then transactions from every card was taken into account.
 
-The available transactional data falls into subcategories: transaction - level (timestamp, country, amount, MCC) and card-level (issuing branch, card type). Card-level data is duplicated verbatim for each transaction related to the corresponding card. An example of three typical transactions is presented in Table \ref{tab-tr-data}. Only transactions which are made before the application date are taken for training and validation.
+The available transactional data falls into subcategories: transaction - level (timestamp, country, amount, MCC) and card-level (issuing branch, card type). Card-level data is duplicated verbatim for each transaction related to the corresponding card. An example of three typical transactions is presented in Table \ref{tab-tr-data}. 
+Also we used  some additional features:
+\begin{itemize}
+\item number of open cards belonging to the customer with positive balances at the time of transaction
+\item number of open cards belonging to the customer with positive balances at the time of transaction 
+\item difference in days between the time of current transaction and the time of previous transaction by this customer
+\item time in days elapsed from the card issue date till the transaction date
+\end{itemize}
+Only transactions which are made before the application date are taken for training and validation.
 
 Our training dataset represented 1.1 million of clients with approximately 400 million transactions in total. As a target variable we used the event of default for consumer loan during a year after its disbursement. The period of one year was selected using the performance window attribute, as described in \ref{}.
 
@@ -145,7 +155,7 @@ We used LightGBM\cite{Ke2017LightGBMAH} implementation of GBM algorithm and crea
 
 Similarly, for the Logistic regression manually designed about 400 aggregate features. Weight of evidence coding and binning of predictors \cite{lund2016woe} was used to transform categorical features.
 
-\subsection{Offline execution of our method}
+\subsection{Offline execution of our method} \label{sec-exec}
 
 \subsubsection{Encoder architecture selection} \label{sec-arc-sel}
 
@@ -172,7 +182,7 @@ We have experimented with different architectures of encoders and different numb
 
 Note that dimensionality of the embedding layers is an optimizable hyperparameter, and it is important to select it properly because  the total number of trainable weights in embedding layers is significantly higher than the number of weights in the encoder and classifier and increasing the latent space dimensionality quickly increase the complexity of the model potentially leading to overfitting.
 
-The dependence of the model performance on the latent space dimensionality is presented in Figure \ref{fig-lat}. As Figure \ref{fig-lat} shows there is a saturation of the model performance when the certain size of the latent space is reached. Based on Figure \ref{tab-loss} we selected the size of the latent space to be ??? since this is a good compromise between the size of the latent space and the performance of the model as was explained earlier.
+The dependence of the model performance on the latent space dimensionality is presented in Figure \ref{fig-lat}. As Figure \ref{fig-lat} shows there is a saturation of the model performance when the certain size of the latent space is reached. Based on Figure \ref{tab-loss} we selected the size of the latent equal to 53 (5 scalar features and concatenation of embeddings of categorial features with total size 48) since this is a good compromise between the size of the latent space and the performance of the model as was explained earlier.
 
 \begin{figure}[ht]
   \caption{Latent space dimensionality}
@@ -202,7 +212,7 @@ We used a batch size of 32 for the training and the batch size of 768 for valida
 
 Learning rate and learning rate reduction schedule is one of the most sensitive hyperparameters which can dramatically change the performance of the model.
 Note, that the optimal learning rate schedule depends heavily on loss function used, batch size and overall number of parameters in the model. 
-We tried several learning rates and several learning rate reduction regimes and found that for both BCE loss and ranking loss the most effective strategy was an aggressive linear learning rate reduction with gamma=0.5, as shown in Table \ref{tab-lr}.
+We tried several learning rates and several learning rate reduction regimes and found that for both BCE loss and ranking loss the most effective strategy was an aggressive linear learning rate reduction with gamma=0.5, as shown in Table \ref{tab-lr}. We also tried unsuccessfully instead of monotonically decreasing the learning rate to vary it cyclically as proposed in \cite{smith2017cyclical}.
 
 \begin{table}[ht]
 \caption{Learning rate schedules}
@@ -271,13 +281,13 @@ Table \ref{tab-res} presents the main results of the experiments described in Se
 
 \begin{table}[ht]
 \caption{Experiment comparison}
-\begin{tabular}{ | p{12em} | c | c | }
+\begin{tabular}{ | c | c | c | }
 \hline
 & \textbf{ROC AUC} & \textbf{N Features} \\
 \hline
-\textbf{Logistic regression on aggregate features} & 0.78 & $\sim400$ \\
-\textbf{LGBM on aggregate features} & 0.81 & $\sim7000$ \\
-\textbf{RNN on detailed data} & 0.84 & 16 \\
+\textbf{Logistic regression} & 0.78 & $\sim400$ \\
+\textbf{LGBM} & 0.81 & $\sim7000$ \\
+\textbf{E.T.-RNN} & 0.84 & 12 \\
 \hline
 \end{tabular}
 \label{tab-res}
@@ -285,22 +295,22 @@ Table \ref{tab-res} presents the main results of the experiments described in Se
 
 As shown in Table \ref{tab-res} E.T.-RNN significantly outperformed the baselines on our data, moreover one of the crucial features of our approach is that for our method we did not have to do feature engineering, unlike the classical methods which rely heavily on the hand-crafted features (400 features for Logistic regression and 7000 features for LGBM).
 
+\subsection{Minimal number of training samples}
+
 Note that results presented in Table \ref{tab-res} were achieved on the full dataset described in Section \ref{sec-data}. We also conducted a series of experiments to estimate model performance for different dataset sizes.
 As Figure \ref{fig-lc} shows LGBM outperforms our approach for \textit{small} volumes of data, as measured in terms of the number of applications (on the X axis). However, given enough data, E.T.-RNN method significantly outperforms classical approach. This observation is in line with the well-known understanding that neural networks outperform classical methods on large datasets.
 
 Also note that E.T.-RNN has steeper learning curve than LGBM hence the performance gap would increase with more data.
 
 \begin{figure}[ht]
-  \caption{ETRNN has steeper learning curve than LGBM.}
+  \caption{E.T.-RNN has steeper learning curve than LGBM.}
   \includegraphics[width=0.46\textwidth]{learning-curve.png}
   \label{fig-lc}
 \end{figure}
 
-\subsection{Minimal number of training samples}
+\subsection{Transaction count}
 
 Note that performance of our model depends on the number of available transactions per client. As Figure \ref{fig-tc} shows our method performs the best for those customers who have many transactions. For example, for the customers having at least one hundred transactions, the performance of the model is close to its peak. As figure \ref{fig-tc} shows on the right Y axis, 75??? percents of the clients in our dataset have at least one hundred transactions.
-
-\subsection{Transaction count}
 
 \begin{figure}[ht]
   \caption{Around 100 of transactions is enough for confident classification}
@@ -308,50 +318,42 @@ Note that performance of our model depends on the number of available transactio
   \label{fig-tc}
 \end{figure}
 
-One of the limitations of our method is the minimum number of transaction per client. We can see on figure\ref{fig-tc} that nearly one hundred of transactions is desirable to confidently estimate the default probability of a client. Regarding our dataset, half of the bank clients with plastic card have more than one hundred transactions.
-
 \section{Discussion}
 
 \subsection{Method applicability}
 
-Our method worked well for reasonably large dataset of low-level transactional data. Credit card transactions reveal a lot of information about the customers and are indicative of their credit worthiness, which well-architectured neural network can possibly capture.
+Our method worked well for the following reasons:
+\begin{itemize}
+    \item Reasonably large number of customers in training dataset. Neural networks have lots of learn able parameters comparing to the classical approaches and hence, require more data than classical methods. This is also true in our case as presented on Figure \ref{fig-lc}.
+    \item Low-level, granular data.
+    \item High-frequency data (as discussed before, at least 75? percents of customers have at least 100 transactions.
+\end{itemize}
 
-The main limitation of our method is availability of enough training examples of default applications. As you can see on \ref{fig-lc} around 200 thousands of training samples are required for to make neural net model which is better than LGBM model. 200 thousands of training samples would contain around 20 thousands of default applications in our case.
+Our method worked because we applied sophisticated neural net method (as discussed in Section \ref{sec-exec} we tried numerous other DL-based approaches, and many of them did not work that well).
 
-But for the other potential cases our method may not work better than traditional approaches. For example, for the data from the application questionnaire there is no need for sophisticated neural network models. Even multi-layer fully-connected network would or different classical ML approaches like logistic regression would work reasonably well.
+But for the other potential cases our method may not work better than traditional approaches. For example, for the data from the application questionnaire there is no need for sophisticated neural network models. Even multi-layer fully-connected network or other classical ML approaches like logistic regression would work reasonably well on such data woth simple structure.
 
-Also, neural networks have lots of learnable parameters compraing to the classical approaches and hence, require more data than classical methods. This is also true in our case as presentent on Figure \ref{fig-lc}.
+To summarize, our E.T.-RNN approoach would possibly work better than classical methods in case where data is in low-level, granular form and there is enough data to train complex neural net based model.
 
-To summarize, our E.T.-RNN approoach would possibly work better than classical methods in case where data is in raw form and there is enough data to train complex neural net based model.
+The significant disadvantage of our method is lack of interpretability. Neural networks are black-box by their nature. The ability to produce rich models on top of raw data representation is the main strength of neural networks. But the same thing leads to significant interpretability problem which is the main weakness of complex models. It is also reasonable to note, that advanced classical ML methods like Gradient Boosting Machine on top of thousands of hand-crafted features also suffer from the lack of interpretability.
 
-The significant disadvantage of our method is lack of interpretability. Neural networks are black-box by their nature. The ability to produce rich models on top of raw data representation is the main strength of neural networks. But the same thing leads to significant interpretability problem which is the main weakness of complex models. It is also reasonable to note, that advanced classical ML methods like gradient boosting on top of thousands of hand-crafted features also suffer from the lack of interpretability.
+\subsection{Advantages of our method}
 
-\subsection{Feature learning}
+The E.T.-RNN apporach has several advantages vis-a-vis other methods.
 
-Less data engineering required: no need to generate hundreds or even thousands of features.
+The significant advantage of neural network based approach is that even complex multivariate time-series data can be directly used for training without any need for feature design. As was demonstrated in \cite{Erhan2009VisualizingHF} the neural network learns meaningful internal representations of the input data during training and this drastically reduces the need to generate hundreds or even thousands of hand-crafted aggregate features as is typically done in credit scoring applications. This means that our method does not require any significant domain-specific expertise for feature design.
 
-\subsection{New opportunities}
+Our method provides the ability to establish fast scoring process, ideally performed in real-time. Note that our model relies exclusively on the transactional data and does not requires any input from the client (forms, questionaries, legal documents).
+Moreover information in the transnational data is exceptionally hard to forge. Hence, there is no need of costly checks for the correctness of such data, unlike data provided by the client or other sources.
 
-Transactional data can potentially kill other data sources. Preliminary results show that the model, based only on transactional data can outperform every other model in currently available in bank. Even the model created on data from credit history agencies, different data from the internet (social networks, site visits), data from the application questionnaire (e. g. salary data) was outperformed if at least one hundred of transactions was available for a credit application.
+Still another advantage of our method is that even a person without any credit history can be reliably accessed for credit-worthiness, his transactional history constituting a source for estimating it.
+Furthermore, this method constitutes a \textit{fair} approach to credit decision making because it \textit{does not} rely on personal demographic information of an individual and therefore cannot discriminate applicants based on various demographic factors.
 
-Moreover the facts in the transnational data are exceptionally hard to forge. Hence, there is no need of costly checks for the correctness of such data unlike data in the application questionnaire.
+Preliminary results show that the model, based only on transactional data can outperform every other model in currently available in bank. Even the model created on data from credit history agencies, different data from the internet (social networks, site visits), data from the application questionnaire (e. g. salary data) was outperformed if at least one hundred of transactions was available for a credit application.
 
-This potentially opens radically new opportunities for credit industry. Given that a client already have a transaction history, the credit application results can be available in the matter of seconds without any supporting documents or lengthy application forms. And even a client without credit history can potentially get an approval for a credit.
+\subsection{Using black-box model in credit scoring}
 
-The two interesting options would be credit applications in online banking app and precise pre-scoring of the bank clients for personal credit offers. 
-
-\subsection{Black-box model interpretation}
-
-While interpretation of the black-box model like LSTM or GRU is exceptionally hard, it is possible to change the architecture of the network to make it interpretable without sacrificing significant part of its classification quality.
-
-One of such changes was proposed by Choi et al.\cite{DBLP:journals/corr/ChoiBSSS16} by the name of RETAIN. The idea is that RNN is not used to perform encoding of the multivariate time-series but instead generates attention weights for each input vector. Then that weights are used to calculate linear combination of input vectors which is finally used for classification.
-
-It is possible to calculate contribution of each input vector to the final prediction. It is possible to apply RETAIN or similar approach to change the architecture of our model.
-
-\subsection{Regularization}
-
-We were not able to find an effective method of regularization to counter overfitting. It could be argued that we found simple models  and aggresive learning rate redyction. It is possible that more succesfull attemts in regularization could allow to use deeper and more complex models, potentionally increasing the quality of scoring methods
-
+Different organizations around the worlds have different philosophies regarding applying black-box models in CS. Some countries lack of interpertablilty is considered less appropriate while in other parts of the world it is considered more appropriate to do so. We believe that this issue will be less relevant moving forward because of the significant progress in solving the black-box interpretetaion problem that have been achieved over the past few years. \cite{DBLP:journals/corr/ChoiBSSS16}, [?] [?] constitute some examples of the recent work. Based of this progress interpretation problem will be less relevant moving forward.
 
 \section{Conclusions}
 
@@ -367,7 +369,18 @@ Our main contributions are:
 
 \subsection{Future work}
 
-One of the approach to overcome this limitation would be use of the transfer learning techniques. We have done some preliminary research where we tried to create a scoring model for mortgage loans instead of retail credits. We used trained neural network for model retail credits as a start and then fine-tuned it using additional training samples for mortgage loans. As you can see in table the fine-tuned model has shown significantly better performance than the model built only on mortgage loans data.
+\subsubsection{Regularization}
+
+We were not able to find an effective method of regularization to counter model overfitting. It is possible that this is the reason simpler models perform better as the lower number of trainable weight promotes generalization. It is possible that devising a successful regularization strategy could allow to use deeper and more complex models, potentially increasing the quality of scoring methods
+
+\subsubsection{Effect of time}
+
+We were not able to fully integrate the notion of time in our model. Intuitively it makes some difference in the credit score if the customers transactions we have have been done during last month or have been done a year ago, but our current model does not distinguish between two such cases. We tried to pass the age of transaction in days relative to the application date as an additional input feature for the encoder or pass the age of last transaction as a feature for the classifier but were unable to improve our results. 
+
+\subsubsection{Transfer learning}
+
+Our method requires reasonably large dataset for training. One of the possible approach to overcome this limitation would be use of the transfer learning techniques. We have done some preliminary research where we tried to create a scoring model for mortgage loans instead of retail credits. We used trained neural network for model retail credits as a start and then fine-tuned it using additional training samples for mortgage loans. The preliminary results looks promising but additional experiments are needed for the conclusive results.
+
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{main}
