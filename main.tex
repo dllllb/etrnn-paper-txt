@@ -27,15 +27,26 @@ The goal is to predict should we accept an application for a credit using the cl
 
 \section{Introduction}
 
-The main goal of credit scoring process is to reduce informational asymmetry between credit applicant and financial institution.
+Credit scoring is a very important problem for the banking industry because of the huge financial implications for the banks. Banking industry has developed credit scoring models ever since the middle of the XX century  and has perfected this models ever since investing millions of dollars in this process. Traditional credit scoring models rely on loan application questionary, applicants credit history and various other aggregate financial information relevant to the customers application. This models use traditional machine learning methods such as logistic regression to compute credit score of the customer that is indicative if the customer would return the loan or not. Although widespread and useful, this models have certain limitations. First, credit scoring require extensive feature engineering and deep domain knowledge in order to design good features.
+Second, if the customer does not have significant credit history it is hard to make reliable scoring decisions regarding that person. Third, this models do not take full advantage of all the data available about the customer in modern settings.
 
-Traditionally, very simple models like logistic regression are used for the task of credit scoring. They are easily interpretable, computationally effective and have modest requirements to the dataset volume.
+In this paper we propose a novel approach, called \textit{Embedding-Transactional Recurrent Neural Network (E.T.-RNN)}, to compute credit scores of the bank customers by examining history of their credit and debit card transactions.
+We do it using deep learning approaches as opposed to more traditional machine learning methods.
+Note that this approach is only applicable only to to those customers that have credit or debit cards with the bank. Since a significant percent of applicants indeed have credit or debit credit cards our methods works for large segment of the applicants. Furthermore our proposed method has the following advantages in comparison with current credit scoring methods.
+First, as is shown in the paper the proposed DL-based method outperforms the baselines including models currently in use in the bank resulting in significant financial gains.
+Second, the proposed DL-based model works directly on the customer transactions and does not require extensive feature engineering requiring deep domain expertise (generating hundreds or thousands of hand-crafted aggregate features).
+Third, our model works exclusively on the transactional data and therefore does not require any additional input from the client that means that we can make credit loan decisions very fast ideally in nearly real-time because the whole credit scoring process is fully automated.
+Fourth, information in the transactional data is exceptionally hard to forge. Hence there is no need to check the correctness of the data unlike the questionnaire and some other data sources used for scoring.
+Fifth, even customers without any credit history can be reliably accessed for credit worthiness, their transactional history constituting a source for estimating credit risks.
+Finally, a proposed method  constitutes a \textit{fair approach} to credit scoring as it does not use information about the individual and therefore cannot be used to discriminate by various demographic factors.
 
-Unfortunately such models do not easily apply to some types of valuable data. History of card transactions is a good example. Nearly half of the clients coming to take a credit already have some type of card account in the bank. And the transactions of that client contain information that can be used to predict customer credibility in addition to commonly used data such as credit history data and questionnaire data. One way to integrate such data into existing models would be by creating a number of aggregate variables (mean number of transactions per day, mean transaction amounts, mean balance etc.) In this paper we use a neural network to process transactional data without creating intermediate aggregates.
+These constitute very significant advantages vis-a-vis current loan practices and have a potential to disrupt the retail banking loan industry. One issue with the proposed approach constitutes the interpretability of black-box models such as neural networks.
+Different organizations across the world have different philosophies regarding applying the black-box model to credit scoring problems. while in some countries lack of interpretability is considered as clear "no-go", in other parts of the world it is considered more appropriate to use such models for credit scoring tasks. Also, there has been significant progress in solving the black box interpretation problems in the last few years \cite{DBLP:journals/corr/ChoiBSSS16}, \cite{gupta2018lisa}, \cite{mccoy2018rnns} and we expect this progress will accelerate even faster over the years. Therefore we believe that the issue of using the models for credit scoring will be less relevant moving forward.
 
-!!! Contribution: We treated the credit scoring task as a text classification task, using clients as texts and transactions as individual words.
-
-!!! Information assymetry
+This paper makes the following contributions.
+First, we propose to use neural networks on the customers fine-grained transactional data for credit scoring applications in the banking industry.
+Second, we tested our method against the benchmarks on the historical data and achieved superior performance.
+The third, we conducted a pilot study on banking customers and produced significant financial gains for the bank.
 
 \section{Related work} \label{sec-rw}
 
@@ -54,7 +65,7 @@ In this paper, we use an RNN based method in the credit scoring problem. We desc
 
 \subsection{Transactional data}
 
-Our method computes credit scores using transcational data,
+Our method computes credit scores using transactional data,
 each client having multiple credit card transactions and each transaction having several attributes, both categorical and numerical and occurring at a certain time. Our data can be described as multivariate time-series data, the schema of which is presented in Table \ref{tab-tr-data}, where MCC code represents the type of merchant, such as airline, hotel, restaurant, etc.
 
 \begin{table}[ht]
@@ -348,7 +359,8 @@ The E.T.-RNN apporach has several advantages vis-a-vis other methods.
 The significant advantage of neural network based approach is that even complex multivariate time-series data can be directly used for training without any need for feature design. As was demonstrated in \cite{Erhan2009VisualizingHF} the neural network learns meaningful internal representations of the input data during training and this drastically reduces the need to generate hundreds or even thousands of hand-crafted aggregate features as is typically done in credit scoring applications. This means that our method does not require any significant domain-specific expertise for feature design.
 
 Our method provides the ability to establish fast scoring process, ideally performed in real-time. Note that our model relies exclusively on the transactional data and does not requires any input from the client (forms, questionaries, legal documents).
-Moreover information in the transnational data is exceptionally hard to forge. Hence, there is no need of costly checks for the correctness of such data, unlike data provided by the client or other sources.
+
+Moreover information in the transactional data is exceptionally hard to forge. Hence, there is no need of costly checks for the correctness of such data, unlike data provided by the client or some other sources.
 
 Still another advantage of our method is that even a person without any credit history can be reliably accessed for credit-worthiness, his transactional history constituting a source for estimating it.
 Furthermore, this method constitutes a \textit{fair} approach to credit decision making because it \textit{does not} rely on personal demographic information of an individual and therefore cannot discriminate applicants based on various demographic factors.
@@ -361,15 +373,12 @@ Different organizations around the worlds have different philosophies regarding 
 
 \section{Conclusions}
 
-Neural network based model is hungry for data but can outperform classical ML approaches. The other huge advantage of the neural net based approach is unsupervised feature learning. There is almost no need to manually design features which saves tons of time for the data scientist.
+In this paper we proposed a novel method ... that ...
 
-The main disadvantage of the neural net based approach is its black-box nature. However, this is the active topic of the research. Some approaches to interpretation like RETAIN can already shed some light to the inner logic of the model.
+This method allows ... (advantages).
 
-Our main contributions are:
-\begin{itemize}
-\item{Application of neural networks to transcational data in credit scoring process.}
-\item{New method for credit scoring based on raw transactional data - Embedded transactional recurrent neural network (E.T.-RNN).}
-\end{itemize}
+We tested our method against the benchmarks on the historical data and achieved superior performance.
+We also conducted a pilot study on banking customers and produced significant financial gains for the bank.
 
 \subsection{Future work}
 
