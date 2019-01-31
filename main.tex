@@ -1,6 +1,7 @@
 \documentclass[sigconf]{acmart}
-\usepackage{tabularx}
-    \newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\usepackage{array}
+
+\hyphenation{trans-action-level}
 
 \acmYear{2019}
 \setcopyright{none}
@@ -11,41 +12,37 @@
 
 \begin{document}
 
-\title{E.T.-RNN: Neural networks for card transactions analysis}
+\title{E.T.-RNN: Applying Deep Learning to Credit Loan Applications}
 
-\author{Babaev Dmitri}
-\email{}
+\author{Alexander Tuzhilin}
 \affiliation{
-  \institution{}
-  \city{}
+  \institution{Stern School of Business, New York University}
 }
-\author{Umerenkov Dmitri}
-\email{}
+\email{atuzhili@stern.nyu.edu}
+
+\author{Dmitri Babaev}
+\email{dmitri.babaev@gmail.com}
 \affiliation{
   \institution{}
-  \city{}
 }
-\author{Tuzhilin Alexander}
-\email{}
+
+\author{Dmitri Umerenkov}
+\email{d.umerenkov@gmail.com}
 \affiliation{
   \institution{}
-  \streetaddress{}
-  \city{}
-  \state{}
-  \postcode{}
 }
-\author{Savchenko Maxim}
-\email{}
+
+\author{Maxim Savchenko}
+\email{savvvan@gmail.com}
 \affiliation{
   \institution{}
-  \city{}
 }
 
 \date{30 July 1999}
 
 \begin{abstract}
-In this paper we'd like to describe our successful attempt to use neural networks in conservative credit scoring domain.
-The goal is to predict should we accept an application for a credit using the clients card transaction history.
+In this paper we present a novel approach to credit scoring of retail customers in the banking industry based on deep learning methods. We used RNNs on fine grained transnational data to compute credit scores for the loan applicants. We demonstrate that our approach significantly outperforms the baselines based on the customer data of a large European bank. We also conducted a pilot study on loan applicants of the bank, and the study produced significant financial gains for the organization.
+In addition, our method has several other advantages described in the paper that are very significant for the bank.
 \end{abstract}
 
 \maketitle
@@ -74,7 +71,7 @@ First, we propose to use neural networks on the customers fine-grained transacti
 Second, we tested our method against the benchmarks on the historical data and achieved superior performance.
 Third, we conducted a pilot study on loan applicants and produced significant financial gains for the bank.
 
-The rest of the paper is organised as follows. In section two we discuss the related work. In section three we describe the proposed method. Section four contains experiment results. In section five we present our results. In section six we discuss the applicability of our method.
+The rest of the paper is organised as follows. In Section 2 we discuss the related work. In Section 3 we describe the proposed method. In Section 4 we present our experiments and in Section 5 the results of these experiments. Section 6 and 7 are dedicated to the discussion of our results and conclusions.
 
 \section{Related work} \label{sec-rw}
 
@@ -94,41 +91,39 @@ In this paper, we use an RNN based method in the credit scoring problem. We desc
 \subsection{Transactional data}
 
 Our method computes credit scores using transactional data,
-each client having multiple credit card transactions and each transaction having several attributes, both categorical and numerical and occurring at a certain time. Our data can be described as multivariate time-series data, the schema of which is presented in Table \ref{tab-tr-data}, where MCC code represents the type of merchant, such as airline, hotel, restaurant, etc.
+each client having multiple credit card transactions, and each transaction having several attributes, both categorical and numerical, and occurring at a certain time. Our data can be described as multivariate time-series data, the schema of which is presented in Table \ref{tab-tr-data}. Merchant type field represents the kind of a merchant, such as airline, hotel, restaurant, etc. (note that it is impossible to restore the real merchant organization identifier from this field).
 
 \begin{table}[ht]
 \caption{Data structure for a single client}
-\begin{tabular}{ | l |  l l l | }
+\begin{tabular}{ | m{7em} |  m{5em} m{5em} m{5em}| }
 \hline
 \textbf{Amount} & 230 & 5 & 40 \\
 \textbf{Currency} & EUR & USD & USD \\
 \textbf{Country} & France & US & US \\
 \textbf{Time} & 16:40 & 20:15 & 09:30 \\
 \textbf{Date} & Jun 21 & Jun 21 & Jun 22 \\
- & 5813 & 4111 & 5722 \\
-\textbf{MCC} & (Restaurants) & (Transport) & (Household \\
-&  &  & Appliance) \\
+\textbf{Merchant Type} & Restaurant & Transportation & Household Appliance \\
 \textbf{Card type} & Visa Classic & Visa Classic & Visa Gold \\
 \textbf{Issuing} & 90/10735 & 90/01735 & 90/01779 \\
 \textbf{Branch} &&& \\
-\textbf{Number of opened} & 1 & 1& 1 \\
+\textbf{N opened} & 1 & 1& 1 \\
 \textbf{debit cards} &&& \\
-\textbf{Number of opened} & 1 & 1& 1 \\
+\textbf{N opened} & 1 & 1& 1 \\
 \textbf{credit cards} &&& \\
 \hline
 \end{tabular}
 \label{tab-tr-data}
 \end{table}
 
-In the section we describe an architecture of the neural network that computes credit scores using that transactional data.
+In the next section we describe an architecture of the neural network that computes credit scores using that transactional data.
 
 \subsection{Architecture overview}
 
-RNNs are used for processing sequential information.  In a way, RNNs have "memory" over previous computations and use this information in current processing. This approach is naturally suited for many NLP tasks including text classification, machine translation and language modelling \cite{mikolov2010recurrent}.
+RNNs are used for processing sequential information.  In a way, RNNs have "memory" over previous computations and use information from the previous time-steps in addition to the current input in order to produce next output. This approach is naturally suited for many NLP tasks including text classification, machine translation and language modelling \cite{mikolov2010recurrent}.
 
-Our \textit{Embedding-Transctional RNN (E.T.-RNN)} architecture is presented in Figure \ref{fig-arch} and is inspired by the NLP methods in the context of deep learning, as explained in Section \ref{sec-rw}. We treated the credit scoring task as a text classification task, using clients as texts and transactions as individual words.
+Our \textit{Embedding-Transctional RNN (E.T.-RNN)} architecture is presented in Figure \ref{fig-arch} and is inspired by the NLP methods in the context of deep learning \cite{mikolov2010recurrent}. We treated the credit scoring task as a text classification task, using clients as texts and transactions as individual words.
 
-As Figure \ref{fig-arch} shows, the E.T.-RNN model consists of three parts: embedding layers, recurrent encoder and classifier. We will explain each of them in the rest of this section. Note that all the parts are trained \textit{simultaneously} in an end-to-end manner.
+As Figure \ref{fig-arch} shows, the E.T.-RNN model consists of three parts: embedding layers, recurrent encoder and classifier. We will explain each of them in the rest of this section. Note that all the parts are trained \textit{simultaneously} in the end-to-end manner.
 
 \subsubsection{Embeddings}
 
@@ -162,16 +157,16 @@ In the final version of our model we decided to use margin ranking loss with mar
 
 \subsection{Ensembling} \label{sec-method-ens}
 
-Ensembling \cite{breiman1996bagging} is a way to increase both quality of the model and its stability at the expense of time and computational power. In our case we have a relative abundance of the negative class samples as described in Section \ref{sec-data}, hence it is possible to use different subsamples of the negative class samples for training each model in the ensemble. The specific parameters will be described in Section \ref{sec-ens}.
+Ensembling \cite{breiman1996bagging} is a way to increase both quality of the model and its stability at the expense of time and computational power. In our case, we have a relative abundance of the negative class samples, as described in Section \ref{sec-data}. Hence it is possible to use different subsamples of the negative class samples for training each model in the ensemble. The specific parameters will be described in Section \ref{sec-ens}.
 
-In the final version of our model we settled to use mean predictions of an ensemble of six separately trained models, as a practical balance between prediction quality and execution time. Ensemble quality gain and other possible ensembling strategies are further explored in Section \ref{sec-arc-sel}.
+In the final version of our model, we settled to use mean predictions of an ensemble of six separately trained models, as a practical balance between prediction quality and execution time. Ensemble quality gain and other possible ensembling strategies are further explored in Section \ref{sec-arc-sel}.
 
 \section{Experiments} \label{sec-exp}
 \subsection{Data} \label{sec-data}
 
-The data used for experiments was provided by large European bank. For our experiments we took transactional data for the clients who applied for the \textit{retail credits}. We only considered applicants who already used debit or a credit card product in the bank. If a client has several cards, then transactions from every card was taken into account.
+The data used for experiments was provided by a large European bank. For our experiments, we took transactional data for the clients who applied for the \textit{retail credits}. We only considered applicants who already used a debit or a credit card product in the bank. If a client has several cards, then transactions from every card was taken into account.
 
-The available transactional data falls into subcategories: transaction-level (such as timestamp, country, amount, MCC) and card-level (such as issuing branch, card type). Card-level data is duplicated verbatim for each transaction related to the corresponding card. An example of three typical transactions is presented in Table \ref{tab-tr-data}. 
+The available transactional data falls into subcategories: transaction-level (such as timestamp, country, amount, merchant type) and card-level (such as issuing branch, card type). Card-level data is duplicated verbatim for each transaction related to the corresponding card. An example of three typical card transactions is presented in Table \ref{tab-tr-data}. 
 We also used two derived features calculated from transactional data:
 \begin{itemize}
 \item difference in days between the time of current transaction and the time of previous transaction by this customer
@@ -179,13 +174,13 @@ We also used two derived features calculated from transactional data:
 \end{itemize}
 Only the transactions performed before the application date are taken for training and validation.
 
-Our training dataset represented 1.1 million clients with approximately 400 million transactions in total. As a target variable we used the event of default for consumer loan during a year after its disbursement. The period of one year was selected using the performance window attribute, as described in \cite{siddiqi2005credit}.
+Our training dataset represented 1.1 million clients with approximately 400 million transactions in total. As a target variable, we used the event of default for consumer loan during a year after its disbursement. The period of one year was selected using the performance window attribute, as described in \cite{siddiqi2005credit}.
 
-Due to the risk of data non-stationarity, we have opted to use out-of-time validation strategy, as in \cite{KVAMME2018207}, instead of out-of-sample validation as used in \cite{khandani2010consumer} and \cite{bellotti2013forecasting}. Note that our results for the out-of-fold validation were consistently higher than that for the out-of-time validation for a range of architectures and hyperparameters, which is the common situation as discussed in \cite{glennon2008development}.
+Due to the risk of data non-stationarity, we have opted to use out-of-time validation strategy, as in \cite{KVAMME2018207}, instead of out-of-sample validation as used in \cite{khandani2010consumer} and \cite{bellotti2013forecasting}. Note that our results for the out-of-fold validation were consistently higher than that for the out-of-time validation for a range of architectures and hyperparameters, which is the common situation, as discussed in \cite{glennon2008development}.
 
 We have used a subset of credit applications from 16-month period for training and four-month period for the out-of-time validation. Training and validation sets were the same for each considered model and baseline.
 
-Due to a large disparity between number of positive and negative cases (because of the low default rate at the bank), we settled on the following undersampling strategy: before each experiment we selected all the positive cases and 10 times as much randomly selected negative cases, on each training epoch we used all positive cases and an equal number of negative cases, selected from the pool of negative cases.
+Due to a large disparity between number of positive and negative cases (because of the low default rate at the bank), we settled on the following undersampling strategy: before each experiment we selected all the positive cases and 10 times as much randomly selected negative cases. On each training epoch we used all positive cases and an equal number of negative cases, selected from the pool of negative cases.
 
 All models in this paper where trained on the last 800 transactions for each customer when available, padding by zero was applied when the actual transaction count for a client was lower.
 
@@ -203,7 +198,7 @@ Similarly, for the logistic regression we manually designed about 400 aggregate 
 
 \subsubsection{Encoder architecture selection} \label{sec-arc-sel}
 
-We have experimented with a different architectures of encoders, using Long Short Term Memory (LSTM), Bidirectional Recurrent Cells \cite{schuster1997bidirectional} and Gated Recurrent Units (GRU). The results of this comparison are presented in Table \ref{tab-enc-arch}. Based of this comparison we decided to use one-layer GRU because the difference with the best performing bidirectional model was not statistically significant while increasing the complexity of the model and incurring a noticeable computational price.
+We have experimented with a different architectures of encoders, using Long Short Term Memory (LSTM), Bidirectional Recurrent Cells \cite{schuster1997bidirectional} and Gated Recurrent Units (GRU). The results of this comparison are presented in Table \ref{tab-enc-arch}. Based of this comparison we decided to use one-layer GRU because the difference with the best performing bidirectional model was not statistically significant, while increasing complexity of the model and incurring a noticeable computational price.
 
 \begin{table}[ht]
 \caption{Encoder architecture comparison}
@@ -284,7 +279,7 @@ Note that, none of the aforementioned regularization methods proved effective ag
 We tried several different types of ensembling methods:
 \begin{itemize}
 \item Simple averaging of model results. Averaging predictions of different models trained with distinct negative class examples leads to both increased accuracy and reduced variabilty of results, as shown in Figure \ref{fig-ens}
-\item Stochastic Weight averaging (SWA) \cite{DBLP:journals/corr/LoshchilovH16a}  Averaging the weights of ensemble models can significantly reduce inference time since only one model with averaged weights is used instead of the whole ensemble. But in our case averaging of weights of different models led to noticeable reduction in quality.
+\item Stochastic Weight averaging (SWA) \cite{DBLP:journals/corr/LoshchilovH16a}.  Averaging the weights of ensemble models can significantly reduce inference time since only one model with averaged weights is used instead of the whole ensemble. But in our case averaging of weights of different models led to noticeable reduction in quality.
 \item Snapshot ensembling \cite{DBLP:journals/corr/HuangLPLHW17}. Using snapshots of the same model in the final ensemble can significantly reduce training time since only one model should be trained. Unfortunately this approach does not benefit from using distinct negative class examples 
 \item SWA + snapshot ensembling. We found that combining SWA with snapshot ensembling for single model training by taking snapshots after a set epoch and averaging the weights leads to some reduction of variability, but the results were inconclusive and we opted for not using these advanced ensembling methods in our production model.
 \end{itemize}
@@ -295,7 +290,7 @@ We tried several different types of ensembling methods:
   \label{fig-ens}
 \end{figure}
 
-We opted to use a size six averaging ensemble for in our production model providing a reasonable compromise between model quality and training/inference times. As mentioned in Section \ref{sec-method-ens} each model of the ensemble is trained on different subsamples of the negative class samples. As described in Section \ref{sec-data} we use undersampling procedure to reduce the number of negative samples. The negative samples are selected independently for each model of the ensemble, hence each model of the ensemble is trained on slightly different subset of negative samples.
+We opted to use a size six averaging ensemble for our production model, providing a reasonable compromise between model quality and training/inference times. As mentioned in Section \ref{sec-method-ens}, each model of the ensemble is trained on different subsamples of the negative class samples. As described in Section \ref{sec-data}, we use undersampling procedure to reduce the number of negative samples. The negative samples are selected independently for each model of the ensemble, hence each model of the ensemble is trained on slightly different subset of negative samples.
 
 \subsection{Moving to production}
 
@@ -303,7 +298,7 @@ We performed massive field test of our neural scoring model in a bank's producti
 
 These scores were used to make decisions about credit applications for tens of thousands of applicants during one month.
 
-The potential financial gain was measured for the case if our model would be used instead of the current scoring model for the applicants with enough transnational data. The preliminary financial results are measured in the millions of dollars per year, which constitutes a very significant result for the bank of this type and size.
+The potential financial gain was measured for the case if our model is used instead of the current scoring model for the applicants with enough transnational data. The preliminary financial results are measured in the millions of dollars per year, which constitutes a very significant result for the bank of this type and size.
 
 \section{Results}
 
@@ -323,14 +318,14 @@ Table \ref{tab-res} presents the main results of the experiments described in Se
 \label{tab-res}
 \end{table}
 
-As shown in Table \ref{tab-res} E.T.-RNN significantly outperformed the baselines on our data, moreover one of the crucial features of our approach is that for our method we did not have to do feature engineering, unlike the classical methods which rely heavily on the hand-crafted features (400 features for Logistic regression and 7000 features for LGBM).
+As shown in Table \ref{tab-res}, E.T.-RNN significantly outperformed the baselines on our data. Moreover, one of the crucial features of our approach is that we did not have to do feature engineering for our method, unlike the classical methods which rely heavily on the hand-crafted features (e. g. 400 features for Logistic regression and 7000 features for LGBM).
 
 \subsection{Training dataset size}
 
-Note that results presented in Table \ref{tab-res} were achieved on the full dataset described in Section \ref{sec-data}. We also conducted a series of experiments to estimate model performance for different dataset sizes.
-As Figure \ref{fig-lc} shows LGBM outperforms our approach for \textit{small} volumes of data, as measured in terms of the number of applications (on the X axis). However, given enough data, E.T.-RNN method significantly outperforms classical approach. This observation is in line with the well-known understanding that neural networks outperform classical methods on large datasets.
+Note that the results presented in Table \ref{tab-res} were achieved on the full dataset described in Section \ref{sec-data}. We also conducted a series of experiments to estimate model performance for different dataset sizes.
+As Figure \ref{fig-lc}, shows LGBM outperforms our approach for \textit{small} volumes of data, as measured in terms of the number of applications (on the X axis). However, given enough data, E.T.-RNN method significantly outperforms the classical approaches. This observation is in line with the well-known understanding that neural networks outperform classical methods on large datasets.
 
-Also note that E.T.-RNN has steeper learning curve than LGBM hence the performance gap would increase with more data.
+Also note that E.T.-RNN has steeper learning curve than LGBM. Hence the performance gap would increase even further with more available data.
 
 \begin{figure}[ht]
   \caption{E.T.-RNN has steeper learning curve than LGBM.}
@@ -340,7 +335,7 @@ Also note that E.T.-RNN has steeper learning curve than LGBM hence the performan
 
 \subsection{Transaction count}
 
-Performance of our model depends heavily on the number of available transactions per client. As Figure \ref{fig-tc} shows, scoring quality increases untill we reach around 350 transactions. Beyond this level, performance increase due to additional transactions is insignificant enough to be overshadowed by statistical variations in the data. Furthermore the share of clients having more than 350 transactions is about 50 percent for our dataset. This means that our model achieves significant hit rate when scoring clients of the bank. On the other hand our method is still effective even for applicants with a low number of transactions. For clients with more than 25 transactions (95 percent of total number of clients) we reach 81.8 ROC-AUC. 
+Performance of our model depends heavily on the number of available transactions per client. As Figure \ref{fig-tc} shows, scoring quality increases untill we reach around 350 transactions. Beyond this level, performance increase due to additional transactions is insignificant enough to be overshadowed by statistical variations in the data. Furthermore the share of clients having more than 350 transactions is about 50 percent for our dataset. This means that our model achieves significant hit rate when scoring clients of the bank. On the other hand, our method is still effective even for the applicants with a low number of transactions. For clients with more than 25 transactions (95 percent of total number of clients), we reach 81.8 ROC-AUC. 
 
 \begin{figure}[ht]
   \caption{Classification quality vs number of transactions}
@@ -349,7 +344,7 @@ Performance of our model depends heavily on the number of available transactions
 \end{figure}
 
 \begin{figure}[ht]
-  \caption{Classification quality for different ranges of transactions}
+  \caption{Classification quality for customers grouped by number of transactions}
   \includegraphics[width=0.46\textwidth]{figures/information-vs-accuracy-bins.png}
   \label{fig-tcb}
 \end{figure}
@@ -357,12 +352,12 @@ Performance of our model depends heavily on the number of available transactions
 
 Our method worked well for the following reasons:
 \begin{itemize}
-    \item Reasonably large number of customers in training dataset. Neural networks have lots of learnable parameters comparing to the classical approaches and hence, require more data than classical methods. This is also true in our case as presented on Figure \ref{fig-lc}.
-    \item Low-level, granular data. Our data can be described as a series of events and each event consists of several variables. Note that if data structure is relatively simple our method may not work better than traditional approaches. For example, for the data from the application questionnaire there is no need for sophisticated neural network models. Even classical ML approaches like logistic regression would work reasonably well on the data with simple table-like structure.
-    \item High-frequency data (as discussed before, at least 75? percents of customers have at least 100 transactions.
+    \item Reasonably large number of customers in training dataset. Neural networks have lots of learnable parameters comparing to the classical approaches and, hence, require more data than classical methods. This is also true in our case as presented on Figure \ref{fig-lc}.
+    \item Low-level, granular data. Our data can be described as a series of events and each event consists of several variables. Note that if data structure is relatively simple, our method may not work better than the traditional approaches. For example, for the data from the application questionnaire there is no need for sophisticated neural network models. Even classical ML approaches, like logistic regression would work reasonably well on the data with simple table-like structure.
+    \item High-frequency data (as discussed before, at least 75 percents of customers have at least 100 transactions.
 \end{itemize}
 
-Our method worked because we applied sophisticated neural net method (as discussed in Section \ref{sec-exec} we tried numerous other DL-based approaches, and many of them did not work that well).
+Our method worked because we applied sophisticated neural network method (as discussed in Section \ref{sec-exec} we tried numerous other DL-based approaches, and many of them did not work that well) on the data exhibiting aforementioned characteristics.
 
 To summarize, our E.T.-RNN approoach would possibly work better than classical methods in case where data is in low-level, granular form and there is enough data to train complex neural net based model.
 
@@ -374,17 +369,17 @@ We tested our method against the benchmarks on the historical data and achieved 
 The significant advantage of our approach is that even complex multivariate time-series data can be directly used for training without any need for feature design. As was demonstrated in \cite{Erhan2009VisualizingHF}, the neural network learns meaningful internal representations of the input data during training, and this drastically reduces the need to generate hundreds or even thousands of hand-crafted aggregate features, as is typically done in credit scoring applications. This means that our method does not require any significant domain-specific expertise for feature design.
 Also, our model works exclusively on the transactional data and therefore does not require any additional input from the client that means that we can make credit loan decisions very fast ideally in nearly real-time because the whole credit scoring process is fully automated.
 Moreover information in the transactional data is exceptionally hard to forge. Hence, there is no need of costly checks for the correctness of such data, unlike data provided by the client or obtained from some other sources.
-Still another advantage of our method is that even a person without any credit history can be reliably accessed for credit-worthiness, his transactional history constituting a source for estimating credit risks.
-Finally, this method constitutes a \textit{fair} approach to credit decision making because it \textit{does not} rely on personal demographic information of an individual and, therefore, cannot discriminate applicants based on various demographic factors.
+Still another advantage of our method is that even a person without any credit history can be reliably accessed for credit-worthiness, his or her transactional history constituting a source for estimating credit risks.
+Finally, this method provides a \textit{fair} approach to credit decision making because it \textit{does not} rely on personal demographic information of an individual and, therefore, cannot discriminate applicants based on various demographic factors.
+For all these reasons, we believe that the proposed credit scoring approach has a potential to disrupt current loan practices in the retail banking industry.
 
-One of the issues with our method is lack of interpretability. Neural networks are black-box by their nature. The ability to produce rich models on top of raw data representation is the main strength of neural networks. But the same thing leads to significant interpretability problem which is the main weakness of complex models. It is also reasonable to note, that advanced classical ML methods like Gradient Boosting Machine on top of thousands of hand-crafted features also suffer from the lack of interpretability.
+One issue with our method is lack of interpretability. Neural networks constitute black-box models by their nature. The ability to produce rich models on top of raw data representation is the main strength of neural networks. But this ability also leads to significant interpretability problem, which is the main weakness of complex models. Also note that this issue is applicable not only to our method, but also to most other advanced machine learning methods, such as  Gradient Boosting Machine, since they also suffer from the lack of interpretability.
 
-Different organizations around the worlds have different philosophies regarding applying black-box models in CS. Some countries lack of interpertablilty is considered less appropriate while in other parts of the world it is considered more appropriate to do so. We believe that this issue will be less relevant moving forward because of the significant progress in solving the black-box interpretetaion problem that have been achieved over the past few years. \cite{DBLP:journals/corr/ChoiBSSS16}, \cite{gupta2018lisa}, \cite{mccoy2018rnns} constitute some examples of the recent work. Based of this progress interpretation problem will be less relevant moving forward.
+Different organizations around the worlds have different philosophies regarding applying black-box models in credit scoring. Some countries lack of interpertablilty is considered less appropriate while in other parts of the world it is considered more appropriate to do so. We believe that this issue will be less relevant moving forward because of the significant progress in solving the black-box interpretetaion problem, including that of neural networks, that have been achieved over the past few years. \cite{DBLP:journals/corr/ChoiBSSS16}, \cite{gupta2018lisa}, \cite{mccoy2018rnns} constitute some examples of the recent work. Based of this progress, the black-box interpretation problem should be successfully addressed moving forward.
 
-
-As a future work we plan to search for more effective method of regularization which would allow us to use the data we have avaivable more effectively.
-Furthermore we plan to focus on even more effective ways to integrate time into our model. In particular our model is not sensitive to shifting all the customers transactions in time (e.g. shifting by one month back), and we plan to work on this problem.
-Finally we also plan to work on other types of loans such as mortgage loans which differ from retail loans in several respects.
+As a future work we plan to study for more effective method of regularization, which would allow us to use the data we have available more effectively.
+Furthermore, we plan to focus on even more effective ways to integrate time into our model. In particular our model is not sensitive to shifting all the customers transactions in time (e.g. shifting by one month back), and we plan to work on this problem.
+Finally we also plan to work on other types of loans, such as mortgage loans, which differ from retail loans in several respects.
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{main}
