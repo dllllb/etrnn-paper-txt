@@ -335,7 +335,7 @@ Also note that E.T.-RNN has steeper learning curve than LGBM. Hence the performa
 
 \subsection{Transaction count}
 
-Performance of our model depends heavily on the number of available transactions per client. As Figure \ref{fig-tc} shows, scoring quality increases untill we reach around 350 transactions. Beyond this level, performance increase due to additional transactions is insignificant enough to be overshadowed by statistical variations in the data. Furthermore the share of clients having more than 350 transactions is about 50 percent for our dataset. This means that our model achieves significant hit rate when scoring clients of the bank. On the other hand, our method is still effective even for the applicants with a low number of transactions. For clients with more than 25 transactions (95 percent of total number of clients), we reach 81.8 ROC-AUC. 
+Performance of our model depends heavily on the number of available transactions per client. As Figure \ref{fig-tc} shows, scoring quality increases untill we reach around 350 transactions. Beyond this level, performance increase due to additional transactions is insignificant enough to be overshadowed by statistical variations in the data. Furthermore the share of clients having more than 350 transactions is about 50 percent for our dataset. This means that our model achieves significant hit rate when scoring clients of the bank. On the other hand, our method is still effective even for the applicants with a low number of transactions. For clients with more than 25 transactions (about 95 percent of total number of clients), we reach 82.5 ROC-AUC. 
 
 \begin{figure}[ht]
   \caption{Classification quality vs number of transactions}
@@ -354,7 +354,7 @@ Our method worked well for the following reasons:
 \begin{itemize}
     \item Reasonably large number of customers in training dataset. Neural networks have lots of learnable parameters comparing to the classical approaches and, hence, require more data than classical methods. This is also true in our case as presented on Figure \ref{fig-lc}.
     \item Low-level, granular data. Our data can be described as a series of events and each event consists of several variables. Note that if data structure is relatively simple, our method may not work better than the traditional approaches. For example, for the data from the application questionnaire there is no need for sophisticated neural network models. Even classical ML approaches, like logistic regression would work reasonably well on the data with simple table-like structure.
-    \item High-frequency data (as discussed before, at least 75 percents of customers have at least 100 transactions.
+    \item High-frequency data (as discussed before, more than 80 percents of customers have at least 100 transactions.
 \end{itemize}
 
 Our method worked because we applied sophisticated neural network method (as discussed in Section \ref{sec-exec} we tried numerous other DL-based approaches, and many of them did not work that well) on the data exhibiting aforementioned characteristics.
