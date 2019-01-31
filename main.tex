@@ -261,9 +261,9 @@ We tried several learning rates and several learning rate reduction regimes and 
 
 Due to the low number of positive classes, all models exhibit propensity for overfitting. Therefore we tried various types of dropout regularisation, such as:
 \begin{itemize}
-\item \textit{Transaction dropout} that randomly removes a share of client transactions
+\item \textit{Transaction dropout} that randomly drops some of the client transactions with defined probability
 \item \textit{Transaction shuffle} that randomly permutes the order of client transactions
-\item \textit{Embedding dropout} that randomly zeroes some components after embedding layer
+\item \textit{Dropout after embedding} that randomly zeroes some components after embedding layer
 \end{itemize}
 Note that, none of the aforementioned regularization methods proved effective against overfitting, as shown in Figure \ref{fig-reg}.
 
