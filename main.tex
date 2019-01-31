@@ -174,7 +174,7 @@ We also used two derived features calculated from transactional data:
 \end{itemize}
 Only the transactions performed before the application date are taken for training and validation.
 
-Our training dataset represented 1.1 million clients with approximately 400 million transactions in total. As a target variable, we used the event of default for consumer loan during a year after its disbursement. The period of one year was selected using the performance window attribute, as described in \cite{siddiqi2005credit}.
+Our training dataset represented more than 740 thousand clients with approximately 200 million transactions in total. As a target variable, we used the event of default for consumer loan during a year after its disbursement. The period of one year was selected using the performance window attribute, as described in \cite{siddiqi2005credit}.
 
 Due to the risk of data non-stationarity, we have opted to use out-of-time validation strategy, as in \cite{KVAMME2018207}, instead of out-of-sample validation as used in \cite{khandani2010consumer} and \cite{bellotti2013forecasting}. Note that our results for the out-of-fold validation were consistently higher than that for the out-of-time validation for a range of architectures and hyperparameters, which is the common situation, as discussed in \cite{glennon2008development}.
 
