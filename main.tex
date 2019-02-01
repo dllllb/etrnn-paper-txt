@@ -5,8 +5,6 @@
 % defining the \BibTeX command - from Oren Patashnik's original BibTeX documentation.
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08emT\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
-\hyphenation{trans-action-level}
-
 \acmYear{2019}
 \setcopyright{none}
 \acmConference[KDD '19]{KDD 2019}{Aug 04--08, 2019}{Anchorage, Alaska}
@@ -79,7 +77,7 @@ The rest of the paper is organised as follows. In Section 2 we discuss the relat
 
 \section{Related work} \label{sec-rw}
 
-There is a large amount of research on credit scoring problems for the banking industry going back to first half of the XX century \cite{NBERc12952}. A wide range of methods has been used for this task, including logistic regression \cite{RePEc:cup:jfinqa:v:15:y:1980:i:03:p:757-770_00}, decision trees \cite{makowski1985credit}, boosting \cite{bastos2007credit}, support vector machines (SVM) \cite{HUANG2007847} and neural networks (NN) \cite{west2000neural}. Credit scoring methods historically relied on using questionnaire data and applicant's credit history. However new data sources have been utilized more recently to increase scoring quality by using telecom data \cite{bjorkegren2017behavior} and transactional data \cite{khandani2010consumer}, \cite{bellotti2013forecasting}, \cite{KVAMME2018207}, \cite{chi2012hybrid}, \cite{RePEc}.
+There is a large amount of research on credit scoring problems for the banking industry going back to first half of the XX century \cite{NBERc12952}. A wide range of methods has been used for this task, including logistic regression \cite{RePEc:cup:jfinqa:v:15:y:1980:i:03:p:757-770_00}, decision trees \cite{makowski1985credit}, boosting \cite{Bastos2008CreditSW}, support vector machines (SVM) \cite{HUANG2007847} and neural networks (NN) \cite{west2000neural}. Credit scoring methods historically relied on using questionnaire data and applicant's credit history. However new data sources have been utilized more recently to increase scoring quality by using telecom data \cite{bjorkegren2017behavior} and transactional data \cite{khandani2010consumer}, \cite{bellotti2013forecasting}, \cite{KVAMME2018207}, \cite{chi2012hybrid}, \cite{RePEc}.
 
 Most of the previous approaches to credit scoring used {\em aggregated} transactional data either globally \cite{chi2012hybrid} or over some time window, such as a month \cite{khandani2010consumer}, \cite{bellotti2013forecasting} or a day \cite{KVAMME2018207}, and most of them relied on the classical ML methods. For example, in \cite{khandani2010consumer} authors used generalized classification and regression trees on monthly transactional statistics. In \cite{bellotti2013forecasting} authors used discrete survival models on monthly transactional statistics. Furthermore, some authors used NN-based approaches to credit scoring on the aggregated transactional data. For example in \cite{KVAMME2018207} authors applied shallow convolutional neural networks on daily transactional statistics. 
 
@@ -106,7 +104,7 @@ each client having multiple credit card transactions, and each transaction havin
 \textbf{Country} & France & US & US \\
 \textbf{Time} & 16:40 & 20:15 & 09:30 \\
 \textbf{Date} & Jun 21 & Jun 21 & Jun 22 \\
-\textbf{Merchant Type} & Restaurant & Transportation & Household Appliance \\
+\textbf{Merchant Type} & Restaurant & Transport\-ation & Household Appliance \\
 \textbf{Card type} & Visa Classic & Visa Classic & Visa Gold \\
 \textbf{Issuing} & 90/10735 & 90/01735 & 90/01779 \\
 \textbf{Branch} &&& \\
@@ -135,7 +133,7 @@ Credit card transactions are mapped into a latent space before being passed to t
 
 \subsubsection{Encoder}
 
-We used a single layer RNN based on Gated Recurrent Unit (GRU) \cite{DBLP:journals/corr/ChoMGBSB14} as an encoder.  The hidden vector from the last time step was used as the representation of the client. Note that this approach is also commonly used for text analysis \cite{NIPS2014_5346}.
+We used a single layer RNN based on Gated Recurrent Unit (GRU) \cite{DBLP:journals/corr/ChoMGBSB14} as an encoder.  The hidden vector from the last time step was used as the representation of the client. Note that this approach is also commonly used for text analysis \cite{Sutskever:2014:SSL:2969033.2969173}.
 
 \subsubsection{Classifier}
 
@@ -170,7 +168,7 @@ In the final version of our model, we settled to use mean predictions of an ense
 
 The data used for experiments was provided by a large European bank. For our experiments, we took transactional data for the clients who applied for the \textit{retail credits}. We only considered applicants who already used a debit or a credit card product in the bank. If a client has several cards, then transactions from every card was taken into account.
 
-The available transactional data falls into subcategories: transaction-level (such as timestamp, country, amount, merchant type) and card-level (such as issuing branch, card type). Card-level data is duplicated verbatim for each transaction related to the corresponding card. An example of three typical card transactions is presented in Table \ref{tab-tr-data}. 
+The available transactional data falls into subcategories: trans\-action-level (such as timestamp, country, amount, merchant type) and card-level (such as issuing branch, card type). Card-level data is duplicated verbatim for each transaction related to the corresponding card. An example of three typical card transactions is presented in Table \ref{tab-tr-data}. 
 We also used two derived features calculated from transactional data:
 \begin{itemize}
 \item difference in days between the time of current transaction and the time of previous transaction by this customer
@@ -283,7 +281,7 @@ Note that, none of the aforementioned regularization methods proved effective ag
 We tried several different types of ensembling methods:
 \begin{itemize}
 \item Simple averaging of model results. Averaging predictions of different models trained with distinct negative class examples leads to both increased accuracy and reduced variabilty of results, as shown in Figure \ref{fig-ens}
-\item Stochastic Weight averaging (SWA) \cite{DBLP:journals/corr/LoshchilovH16a}.  Averaging the weights of ensemble models can significantly reduce inference time since only one model with averaged weights is used instead of the whole ensemble. But in our case averaging of weights of different models led to noticeable reduction in quality.
+\item Stochastic Weight Averaging (SWA) \cite{DBLP:journals/corr/LoshchilovH16a}.  Averaging the weights of ensemble models can significantly reduce inference time since only one model with averaged weights is used instead of the whole ensemble. But in our case averaging of weights of different models led to noticeable reduction in quality.
 \item Snapshot ensembling \cite{DBLP:journals/corr/HuangLPLHW17}. Using snapshots of the same model in the final ensemble can significantly reduce training time since only one model should be trained. Unfortunately this approach does not benefit from using distinct negative class examples 
 \item SWA + snapshot ensembling. We found that combining SWA with snapshot ensembling for single model training by taking snapshots after a set epoch and averaging the weights leads to some reduction of variability, but the results were inconclusive and we opted for not using these advanced ensembling methods in our production model.
 \end{itemize}
@@ -370,7 +368,7 @@ To summarize, our E.T.-RNN approoach would possibly work better than classical m
 In this paper we proposed a novel E.T.-RNN method which allows to use fine-grained transactional data for credit scoring.
 We tested our method against the benchmarks on the historical data and achieved superior performance. We also conducted a pilot study on banking customers and produced significant financial gains for the bank.
 
-The significant advantage of our approach is that even complex multivariate time-series data can be directly used for training without any need for feature design. As was demonstrated in \cite{Erhan2009VisualizingHF}, the neural network learns meaningful internal representations of the input data during training, and this drastically reduces the need to generate hundreds or even thousands of hand-crafted aggregate features, as is typically done in credit scoring applications. This means that our method does not require any significant domain-specific expertise for feature design.
+The significant advantage of our approach is that even complex multivariate time-series data can be directly used for training without any need for feature design. As was demonstrated in \cite{erhan2009visualizing}, the neural network learns meaningful internal representations of the input data during training, and this drastically reduces the need to generate hundreds or even thousands of hand-crafted aggregate features, as is typically done in credit scoring applications. This means that our method does not require any significant domain-specific expertise for feature design.
 Also, our model works exclusively on the transactional data and therefore does not require any additional input from the client that means that we can make credit loan decisions very fast ideally in nearly real-time because the whole credit scoring process is fully automated.
 Moreover information in the transactional data is exceptionally hard to forge. Hence, there is no need of costly checks for the correctness of such data, unlike data provided by the client or obtained from some other sources.
 Still another advantage of our method is that even a person without any credit history can be reliably accessed for credit-worthiness, his or her transactional history constituting a source for estimating credit risks.
