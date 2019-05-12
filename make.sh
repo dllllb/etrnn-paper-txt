@@ -1,4 +1,4 @@
-pdflatex -interaction=nonstopmode main.tex
-bibtex main
-pdflatex -interaction=nonstopmode main.tex
-pdflatex -interaction=nonstopmode main.tex
+pdflatex -interaction=nonstopmode sigconf.tex
+bibtex sigconf
+pdflatex -interaction=nonstopmode sigconf.tex
+pdflatex -interaction=nonstopmode sigconf.tex
