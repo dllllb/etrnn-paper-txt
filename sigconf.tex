@@ -1,43 +1,65 @@
 \documentclass[sigconf]{acmart}
+ % Do not change for KDD'19
+
+\settopmatter{printacmref=true}
+  % mandatory for KDD'19
+
+\fancyhead{}
+  % do not delete this code.
+
+\usepackage{balance}
+  % for creating a balanced last page (usually last page with references)
+  
 \usepackage{array}
 
-%
 % defining the \BibTeX command - from Oren Patashnik's original BibTeX documentation.
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08emT\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+    
+% Rights management information. 
+% This information is sent to you when you complete the rights form.
+% These commands have SAMPLE values in them; it is your responsibility as an author to replace
+% the commands and values with those provided to you when you complete the rights form.
+%
+% These commands are for a PROCEEDINGS abstract or paper.
 
+\copyrightyear{2019}
 \acmYear{2019}
-\setcopyright{none}
-\acmConference[KDD '19]{KDD 2019}{Aug 04--08, 2019}{Anchorage, Alaska}
-\acmPrice{}
-\acmISBN{}
-\acmDOI{}
+\setcopyright{acmcopyright}
+   % adjust this to the correct option per the rightsreview. Provided in ACM rightsreview confirmation email.
+\acmConference[KDD '19] {The 25th ACM SIGKDD Conference on Knowledge Discovery and Data Mining}{August 4--8, 2019}{Anchorage, AK, USA}
+\acmBooktitle{The 25th ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD'19), June 22--24, 2019, Anchorage, AK, USA}
+\acmPrice{15.00}
+\acmDOI{10.1145/XXXXXX.XXXXXX}
+  % edit the X's to your assigned DOI. Providing in ACM rightsreview confirmation email.
+\acmISBN{978-1-4503-6201-6/19/08} 
 
 \begin{document}
 
 \title{E.T.-RNN: Applying Deep Learning to Credit Loan Applications}
 
-\author{Alexander Tuzhilin}
-\affiliation{
-  \institution{Stern School of Business, New York University}
-}
-\email{atuzhili@stern.nyu.edu}
 
 \author{Dmitri Babaev}
 \email{dmitri.babaev@gmail.com}
 \affiliation{
-  \institution{}
-}
-
-\author{Dmitri Umerenkov}
-\email{d.umerenkov@gmail.com}
-\affiliation{
-  \institution{}
+  \institution{Sberbank AI Lab}
 }
 
 \author{Maxim Savchenko}
 \email{savvvan@gmail.com}
 \affiliation{
-  \institution{}
+  \institution{Sberbank AI Lab}
+}
+
+\author{Alexander Tuzhilin}
+\affiliation{
+  \institution{New York University, Sberbank AI Lab}
+}
+\email{atuzhili@stern.nyu.edu}
+
+\author{Dmitri Umerenkov}
+\email{d.umerenkov@gmail.com}
+\affiliation{
+  \institution{Sberbank AI Lab}
 }
 
 \date{30 July 1999}
@@ -46,6 +68,24 @@
 In this paper we present a novel approach to credit scoring of retail customers in the banking industry based on deep learning methods. We used RNNs on fine grained transnational data to compute credit scores for the loan applicants. We demonstrate that our approach significantly outperforms the baselines based on the customer data of a large European bank. We also conducted a pilot study on loan applicants of the bank, and the study produced significant financial gains for the organization.
 In addition, our method has several other advantages described in the paper that are very significant for the bank.
 \end{abstract}
+
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10010147.10010257.10010293.10010294</concept_id>
+<concept_desc>Computing methodologies~Neural networks</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10010405</concept_id>
+<concept_desc>Applied computing</concept_desc>
+<concept_significance>300</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Computing methodologies~Neural networks}
+\ccsdesc[300]{Applied computing}
 
 \keywords{credit scoring, recurrent neural networks, card transactions, multivariate time-series}
 
@@ -58,12 +98,12 @@ Second, if the customer does not have significant credit history, it is hard to 
 
 In this paper we propose a novel approach, called \textit{Embedding-Transactional Recurrent Neural Network (E.T.-RNN)}, to compute credit scores of the bank customers by examining history of their credit and debit card transactions.
 We do it using a deep learning (DL) approach, as opposed to more traditional machine learning methods.
-Note that this approach is applicable only to those customers that have credit or debit cards with the bank. Since a significant percent of the applicants indeed has credit or debit cards, our method works for a large segment of the applicants. Furthermore our proposed method has the following advantages in comparison to the current credit scoring methods.
+Note that this approach is applicable only to those customers that have credit or debit cards with the bank. Since a significant percent of the applicants indeed have credit or debit cards, our method works for a large segment of the applicants. Furthermore our proposed method has the following advantages in comparison to the current credit scoring methods.
 First, as is shown in the paper, the proposed DL-based method outperforms the baselines, including models currently in use in the bank, resulting in significant financial gains.
 Second, the proposed DL-based model works directly on the customer transactions and does not require extensive feature engineering requiring deep domain expertise (generating hundreds or thousands of hand-crafted aggregate features).
 Third, our model works exclusively on the transactional data and therefore, does not require any additional input from the client. This means that we can make credit loan decisions very fast, ideally in near real-time, because the whole credit scoring process is fully automated.
 Fourth, information in the transactional data is exceptionally hard to forge. Hence there is no need to check the correctness of the data, unlike the questionnaire and some other data sources used for scoring.
-Fifth, even the customers without any credit history can be reliably assessed for credit worthiness, their transactional history constituting a source for estimating credit risks.
+Fifth, even the customers without any credit history can be assessed for credit worthiness, their transactional history constituting a source for estimating credit risks.
 Finally, a proposed method  constitutes a \textit{fair} approach to credit scoring, as it does not use information about the individual and therefore cannot be used to discriminate by various demographic factors.
 These constitute very significant advantages vis-a-vis current loan practices and have a potential to disrupt the retail banking loan industry.
 
@@ -83,7 +123,7 @@ There is a large amount of research on credit scoring problems for the banking i
 
 Most of the previous approaches to credit scoring used {\em aggregated} transactional data either globally \cite{chi2012hybrid} or over some time window, such as a month \cite{khandani2010consumer}, \cite{bellotti2013forecasting} or a day \cite{KVAMME2018207}, and most of them relied on the classical ML methods. For example, in \cite{khandani2010consumer} authors used generalized classification and regression trees on monthly transactional statistics. In \cite{bellotti2013forecasting} authors used discrete survival models on monthly transactional statistics. Furthermore, some authors used NN-based approaches to credit scoring on the aggregated transactional data. For example in \cite{KVAMME2018207} authors applied shallow convolutional neural networks on daily transactional statistics.
 
-Furthermore, \cite{RePEc} has developed some credit scoring models on the {\em unaggregated} transactional data. However, they used classical ML methods, such as SVMs and weighted-vote relational neighbour classifiers, in their models. Moreover, they focused on the connectivity problem in their work to estimate credit risk and used only information of who transacted with with whom, without deploying the full power of the transactional data.
+Furthermore, \cite{RePEc} has developed some credit scoring models on the {\em unaggregated} transactional data. However, they used classical ML methods, such as SVMs and weighted-vote relational neighbour classifiers, in their models. Moreover, they focused on the connectivity problem in their work to estimate credit risk and used only information of who transacted with whom, without deploying the full power of the transactional data.
 
 Also, NNs have been applied to the analysis of the transactional data, but in other types of applications. In \cite{fraud_lstm} authors used Long Short Term Memory (LSTM) Recurrent Neural Network (RNN) \cite{gers1999learning} on individual transaction features for detection of fraudulent transactions. For a review of NNs methods in credit card fraud detection see \cite{abdallah2016fraud}. In \cite{zhang2017credit}  authors applied LSTM RNN for predicting credit scores for a peer-to-peer lending platform.
 
@@ -168,7 +208,9 @@ In the final version of our model, we settled to use mean predictions of an ense
 \section{Experiments} \label{sec-exp}
 \subsection{Data} \label{sec-data}
 
-The data used for experiments was provided by a large European bank. For our experiments, we took transactional data for the clients who applied for the \textit{retail credits}. We only considered applicants who already used a debit or a credit card product in the bank. If a client has several cards, then transactions from every card was taken into account.
+The data used for experiments was provided by a large European bank. For our experiments, we took transactional data for the clients who applied for the \textit{retail credits}. Since, protection of customer's privacy and customer's data is one of the highest priorities of the Bank, the Bank takes the customer privacy protection laws very seriously and, therefore, we cannot describe our data and share it with the readers.
+
+We only considered applicants who already used a debit or a credit card product in the bank. If a client has several cards, then transactions from every card was taken into account.
 
 The available transactional data falls into subcategories: trans\-action-level (such as timestamp, country, amount, merchant type) and card-level (such as issuing branch, card type). Card-level data is duplicated verbatim for each transaction related to the corresponding card. An example of three typical card transactions is presented in Table \ref{tab-tr-data}.
 We also used two derived features calculated from transactional data:
@@ -298,9 +340,9 @@ We opted to use a size six averaging ensemble for our production model, providin
 
 \subsection{Moving to production}
 
-We performed massive field test of our neural scoring model in a bank's production pipeline. We used the model trained on the same dataset as discussed in Section \ref{sec-data} to pre-calculate scores for each client with a debit or credit card.
+We performed massive field test of our neural scoring model in a bank's production pipeline. We used the model trained on the same dataset as discussed in Section \ref{sec-data} to pre-calculate scores for each client with a debit or credit card. Training of a full six model ensemble took about 4 hours on a Tesla P100 GPU. It took about 17 minutes to score 1 million customers on an Tesla P100 GPU. And the inference time scales linearly with the number of clients.
 
-These scores were used to make decisions about credit applications for tens of thousands of applicants during one month.
+These scores were used to make decisions about credit applications for tens of thousands of applicants during one month and the early results are very promising. 
 
 The potential financial gain was measured for the case if our model is used instead of the current scoring model for the applicants with enough transnational data. The preliminary financial results are measured in the millions of dollars per year, which constitutes a very significant result for the bank of this type and size.
 
@@ -363,7 +405,7 @@ Our method worked well for the following reasons:
 
 Our method worked because we applied sophisticated neural network method (as discussed in Section \ref{sec-exec} we tried numerous other DL-based approaches, and many of them did not work that well) on the data exhibiting aforementioned characteristics.
 
-To summarize, our E.T.-RNN approoach would possibly work better than classical methods in case where data is in low-level, granular form and there is enough data to train complex neural net based model.
+To summarize, our E.T.-RNN approach would possibly work better than classical methods in cases where data is in low-level, granular form and there is enough data to train complex neural net based model.
 
 \section{Conclusions}
 
