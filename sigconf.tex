@@ -36,7 +36,7 @@
 \title{E.T.-RNN: Applying Deep Learning to Credit Loan Applications}
 
 
-\author{Dmitri Babaev}
+\author{Dmitrii Babaev}
 \email{dmitri.babaev@gmail.com}
 \affiliation{
   \institution{Sberbank AI Lab}
@@ -54,7 +54,7 @@
 }
 \email{atuzhili@stern.nyu.edu}
 
-\author{Dmitri Umerenkov}
+\author{Dmitrii Umerenkov}
 \email{d.umerenkov@gmail.com}
 \affiliation{
   \institution{Sberbank AI Lab}
@@ -91,22 +91,22 @@ In addition, our method has several other advantages described in the paper that
 
 \section{Introduction}
 
-Credit scoring is a very important problem for the banking industry because of the huge financial implications for the banks. Banking industry has developed credit scoring models ever since the middle of the XX century  and has perfected these models ever since, investing millions of dollars in this process. Traditional credit scoring models rely on a loan application questionaire, applicants credit history and various other aggregate financial information relevant to the customer's application. These models use traditional machine learning methods, such as logistic regression, to compute credit score of the customer that is indicative if the customer would return the loan or not. Although widespread and useful, these models have certain limitations. First, credit scoring require extensive feature engineering and deep domain knowledge in order to design good features.
+Credit scoring is a very important problem for the banking industry because of the huge financial implications for the banks. Banking industry has developed credit scoring models ever since the middle of the XX century  and has perfected these models ever since, investing millions of dollars in this process. Traditional credit scoring models rely on a loan application questionaire, applicants credit history and various other aggregate financial information relevant to the customer's application. These models use traditional machine learning methods, such as logistic regression, to compute the credit score of a customer that is indicative if the customer would return the loan or not. Although widespread and useful, these models have certain limitations. First, credit scoring require extensive feature engineering and deep domain knowledge in order to design good features.
 Second, if the customer does not have significant credit history, it is hard to make reliable scoring decisions regarding that person. Third, the currently existing models do not take full advantage of all the data available about the customer in modern settings.
 
 In this paper we propose a novel approach, called \textit{Embedding-Transactional Recurrent Neural Network (E.T.-RNN)}, to compute credit scores of the bank customers by examining history of their credit and debit card transactions.
 We do it using a deep learning (DL) approach, as opposed to more traditional machine learning methods.
 Note that this approach is applicable only to those customers that have credit or debit cards with the bank. Since a significant percent of the applicants indeed have credit or debit cards, our method works for a large segment of the applicants. Furthermore our proposed method has the following advantages in comparison to the current credit scoring methods.
 First, as is shown in the paper, the proposed DL-based method outperforms the baselines, including models currently in use in the bank, resulting in significant financial gains.
-Second, the proposed DL-based model works directly on the customer transactions and does not require extensive feature engineering requiring deep domain expertise (generating hundreds or thousands of hand-crafted aggregate features).
-Third, our model works exclusively on the transactional data and therefore, does not require any additional input from the client. This means that we can make credit loan decisions very fast, ideally in near real-time, because the whole credit scoring process is fully automated.
+Second, the proposed DL-based model works directly on the customer transactions and does not need extensive feature engineering requiring deep domain expertise (generating hundreds or thousands of hand-crafted aggregate features).
+Third, our model works exclusively on the transactional data and, therefore, does not require any additional input from the client. This means that we can make credit loan decisions very fast, ideally in near real-time, because the whole credit scoring process is fully automated.
 Fourth, information in the transactional data is exceptionally hard to forge. Hence there is no need to check the correctness of the data, unlike the questionnaire and some other data sources used for scoring.
 Fifth, even the customers without any credit history can be assessed for credit worthiness, their transactional history constituting a source for estimating credit risks.
-Finally, a proposed method  constitutes a \textit{fair} approach to credit scoring, as it does not use information about the individual and therefore cannot be used to discriminate by various demographic factors.
+Finally, the proposed method  constitutes a \textit{fair} approach to credit scoring, as it does not use information about the individual and therefore cannot be used to discriminate the credit applicants by various demographic factors.
 These constitute very significant advantages vis-a-vis current loan practices and have a potential to disrupt the retail banking loan industry.
 
 One issue with the proposed approach constitutes the interpretability of the black-box models, such as neural networks.
-Different organizations across the world have different philosophies regarding applying black-box models to credit scoring problems. While in some countries lack of interpretability is considered as clear "no-go", in other parts of the world it is considered more appropriate to use such models for credit scoring tasks. Also, there has been significant progress in solving the black box interpretation problems in the last few years \cite{DBLP:journals/corr/ChoiBSSS16}, \cite{gupta2018lisa}, \cite{mccoy2018rnns} and we expect this progress to accelerate even faster moving forward. Therefore, we believe that the issue of using the black-box models for credit scoring will be less relevant in the future.
+Different organizations across the world have different philosophies regarding applying black-box models to credit scoring problems. While in some countries lack of interpretability is considered as clear "no-go", in other parts of the world it is considered more appropriate to use such models for the credit scoring tasks. Also, there has been significant progress in solving the black box interpretation problems in the last few years \cite{DBLP:journals/corr/ChoiBSSS16}, \cite{gupta2018lisa}, \cite{mccoy2018rnns} and we expect this progress to accelerate even faster moving forward. Therefore, we believe that the issue of using the black-box models for credit scoring will be less relevant in the future.
 
 This paper makes the following contributions.
 First, we propose to use neural networks on the customers fine-grained transactional data for credit scoring applications in the banking industry.
@@ -206,9 +206,8 @@ In the final version of our model, we settled to use mean predictions of an ense
 \section{Experiments} \label{sec-exp}
 \subsection{Data} \label{sec-data}
 
-The data used for experiments was provided by a large European bank. For our experiments, we took transactional data for the clients who applied for the \textit{retail credits}. Since, protection of customer's privacy and customer's data is one of the highest priorities of the Bank, the Bank takes the customer privacy protection laws very seriously and, therefore, we cannot describe our data and share it with the readers.
-
-We only considered applicants who already used a debit or a credit card product in the bank. If a client has several cards, then transactions from every card was taken into account.
+The data used for experiments was provided by a large European bank. For our experiments, we took transactional data for the clients who applied for the \textit{retail credits}. Since strict adherence to the requirements of personal data protection laws was one of the key priorities for the Bank when carrying out the project, we cannot describe our data and share it with the readers.
+Furthermore, we only considered applicants who already used a debit or a credit card product in the bank. If a client has several cards, then transactions from every card was taken into account.
 
 The available transactional data falls into subcategories: trans\-action-level (such as timestamp, country, amount, merchant type) and card-level (such as issuing branch, card type). Card-level data is duplicated verbatim for each transaction related to the corresponding card. An example of three typical card transactions is presented in Table \ref{tab-tr-data}.
 We also used two derived features calculated from transactional data:
@@ -411,7 +410,7 @@ In this paper we proposed a novel E.T.-RNN method which allows to use fine-grain
 We tested our method against the benchmarks on the historical data and achieved superior performance. We also conducted a pilot study on banking customers and produced significant financial gains for the bank.
 
 The significant advantage of our approach is that even complex multivariate time-series data can be directly used for training without any need for feature design. As was demonstrated in \cite{erhan2009visualizing}, the neural network learns meaningful internal representations of the input data during training, and this drastically reduces the need to generate hundreds or even thousands of hand-crafted aggregate features, as is typically done in credit scoring applications. This means that our method does not require any significant domain-specific expertise for feature design.
-Also, our model works exclusively on the transactional data and therefore does not require any additional input from the client that means that we can make credit loan decisions very fast ideally in nearly real-time because the whole credit scoring process is fully automated.
+Also, our model works exclusively on the transactional data and therefore does not require any additional input from the client that means that we can make credit loan decisions very fast, ideally in nearly real-time, because the whole credit scoring process is fully automated.
 Moreover information in the transactional data is exceptionally hard to forge. Hence, there is no need of costly checks for the correctness of such data, unlike data provided by the client or obtained from some other sources.
 Still another advantage of our method is that even a person without any credit history can be reliably accessed for credit-worthiness, his or her transactional history constituting a source for estimating credit risks.
 Finally, this method provides a \textit{fair} approach to credit decision making because it \textit{does not} rely on personal demographic information of an individual and, therefore, cannot discriminate applicants based on various demographic factors.
@@ -419,9 +418,9 @@ For all these reasons, we believe that the proposed credit scoring approach has 
 
 One issue with our method is lack of interpretability. Neural networks constitute black-box models by their nature. The ability to produce rich models on top of raw data representation is the main strength of neural networks. But this ability also leads to significant interpretability problem, which is the main weakness of complex models. Also note that this issue is applicable not only to our method, but also to most other advanced machine learning methods, such as  Gradient Boosting Machine, since they also suffer from the lack of interpretability.
 
-Different organizations around the worlds have different philosophies regarding applying black-box models in credit scoring. Some countries lack of interpertablilty is considered less appropriate while in other parts of the world it is considered more appropriate to do so. We believe that this issue will be less relevant moving forward because of the significant progress in solving the black-box interpretetaion problem, including that of neural networks, that have been achieved over the past few years. \cite{DBLP:journals/corr/ChoiBSSS16}, \cite{gupta2018lisa}, \cite{mccoy2018rnns} constitute some examples of the recent work. Based of this progress, the black-box interpretation problem should be successfully addressed moving forward.
+Different organizations around the worlds have different philosophies regarding applying black-box models in credit scoring. In some countries, lack of interpertablilty is considered less appropriate while in other parts of the world it is considered more appropriate to do so. We believe that this issue will be less relevant moving forward because of the significant progress in solving the black-box interpretetaion problem, including that of neural networks, that have been achieved over the past few years. \cite{DBLP:journals/corr/ChoiBSSS16}, \cite{gupta2018lisa}, \cite{mccoy2018rnns} constitute some examples of the recent work. Based of this progress, the black-box interpretation problem should be successfully addressed moving forward.
 
-As a future work we plan to study for more effective method of regularization, which would allow us to use the data we have available more effectively.
+As a future work, we plan to study more effective method of regularization, which would allow us to use the data we have available more effectively.
 Furthermore, we plan to focus on even more effective ways to integrate time into our model. In particular our model is not sensitive to shifting all the customers transactions in time (e.g. shifting by one month back), and we plan to work on this problem.
 Finally we also plan to work on other types of loans, such as mortgage loans, which differ from retail loans in several respects.
 
