@@ -1,0 +1,12 @@
+[project]
+name = "etrnn-paper"
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pandas>=0.23",
+    "seaborn>=0.9",
+    "matplotlib>=3",
+    "pylint>=2.17.0",
+    "notebook>=7.0.0",
+]
